@@ -9,13 +9,42 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Settings/dialog_actuator_edit.cpp \
+    Settings/dialog_actuator_setting.cpp \
+    Settings/dialog_cannodeedit.cpp \
+    Settings/dialog_net_setting.cpp \
+    Settings/dialog_placement_setting.cpp \
+    Settings/dialog_sasetting.cpp \
+    Settings/dialog_sensor_edit.cpp \
+    Settings/dialog_sensor_setting.cpp \
+    Settings/dialog_signal_setting.cpp \
+    Settings/setting_containers.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    Settings/dialog_actuator_edit.h \
+    Settings/dialog_actuator_setting.h \
+    Settings/dialog_cannodeedit.h \
+    Settings/dialog_net_setting.h \
+    Settings/dialog_placement_setting.h \
+    Settings/dialog_sasetting.h \
+    Settings/dialog_sensor_edit.h \
+    Settings/dialog_sensor_setting.h \
+    Settings/dialog_signal_setting.h \
+    Settings/setting_containers.h \
     mainwindow.h
 
 FORMS += \
+    Settings/dialog_actuator_edit.ui \
+    Settings/dialog_actuator_setting.ui \
+    Settings/dialog_cannodeedit.ui \
+    Settings/dialog_net_setting.ui \
+    Settings/dialog_placement_setting.ui \
+    Settings/dialog_sasetting.ui \
+    Settings/dialog_sensor_edit.ui \
+    Settings/dialog_sensor_setting.ui \
+    Settings/dialog_signal_setting.ui \
     mainwindow.ui
 
 TRANSLATIONS += \
