@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     //pDialogSaSetting->setModal(false);
+    //qDebug() << pSettingContainers.
 }
 
 MainWindow::~MainWindow()

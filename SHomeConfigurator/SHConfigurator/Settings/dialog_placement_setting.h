@@ -4,11 +4,9 @@
 #include <QDialog>
 #include <QInputDialog>
 #include <QMap>
-#include <QList>
 
 #include "Settings/setting_containers.h"
-//#include "Application/Settings/InternalClass/placement_setting.h"
-
+#include "InternalClass/placement_setting.h"
 
 namespace Ui {
 class Dialog_Placement_Setting;
@@ -25,6 +23,8 @@ public:
 
 private:
      void create_table_placement();
+     void fill_table_placement();
+     void add_row_placement(Placement_Setting elem);
 
 private:
     Ui::Dialog_Placement_Setting *ui;

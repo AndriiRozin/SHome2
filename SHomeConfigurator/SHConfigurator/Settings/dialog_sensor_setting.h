@@ -5,10 +5,8 @@
 #include <QInputDialog>
 #include <QMap>
 
-#include "Settings/setting_containers.h"
-//#include "Settings/InternalClass/sensor_setting.h"
-//#include "Settings/dialog_sensor_edit.h"
-//#include "Settings/dialog_placement_setting.h"
+#include "InternalClass/setting_containers.h"
+#include "InternalClass/sensor_setting.h"
 
 namespace Ui {
 class Dialog_Sensor_Setting;
@@ -25,6 +23,9 @@ public:
 
 private:
     void create_table_sensor();
+    void fill_table_sensor();
+    void add_row_sensor(Sensor_Setting elem);
+    void delete_sensor_from_list(int id);
 
 private:
     Ui::Dialog_Sensor_Setting *ui;

@@ -10,6 +10,8 @@ Dialog_Signal_Setting::Dialog_Signal_Setting(QWidget *parent, Setting_Containers
 {
     ui->setupUi(this);
     create_table_signal();
+
+    //p_containers->
 }
 
 Dialog_Signal_Setting::~Dialog_Signal_Setting()
