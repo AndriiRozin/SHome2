@@ -34,7 +34,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Setting_Containers *  pSettingContainers;
+    Setting_Containers * pSettingContainers;
     Dialog_SAsetting * pDialogSaSetting;
 };
 #endif // MAINWINDOW_H

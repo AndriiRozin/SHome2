@@ -4,11 +4,9 @@
 #include <QDialog>
 #include <QInputDialog>
 #include <QMap>
-#include <QList>
 
-#include "Settings/setting_containers.h"
-//#include "Application/Settings/InternalClass/placement_setting.h"
-
+#include "InternalClass/setting_containers.h"
+#include "InternalClass/placement_setting.h"
 
 namespace Ui {
 class Dialog_Placement_Setting;
@@ -23,8 +21,17 @@ public:
     explicit Dialog_Placement_Setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Placement_Setting();
 
+private slots:
+    void on_pushButton_add_clicked();
+    void on_pushButton_delete_clicked();
+    void on_pushButton_save_clicked();
+    void on_pushButton_close_clicked();
+
 private:
      void create_table_placement();
+     void fill_table_placement();
+     void add_row_placement(Placement_Setting elem);
+     void delete_placement_from_list(int id);
 
 private:
     Ui::Dialog_Placement_Setting *ui;

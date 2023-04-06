@@ -5,8 +5,8 @@
 #include <QInputDialog>
 #include <QMap>
 
-#include "Settings/setting_containers.h"
-//#include "Application/Settings/InternalClass/net_setting.h"
+#include "InternalClass/setting_containers.h"
+#include "InternalClass/net_setting.h"
 
 namespace Ui {
 class Dialog_net_setting;
@@ -21,15 +21,22 @@ public:
     explicit Dialog_net_setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_net_setting();
 
+private slots:
+    void on_pushButton_add_clicked();
+    void on_pushButton_delete_clicked();
+    void on_pushButton_save_clicked();
+    void on_pushButton_cancel_clicked();
+
 private:
     void create_table_net();
+    void fill_table_net();
+    void add_row_net(Net_Setting elem);
+    void delete_net_from_list(int id);
 
 private:
     Ui::Dialog_net_setting *ui;
     Setting_Containers * p_containers;
-
     QStringList table_header = {"Name", "ID", "Description"};
-    // QMap<int, Net_setting> net_map;
 };
 
 #endif // DIALOG_NET_SETTING_H

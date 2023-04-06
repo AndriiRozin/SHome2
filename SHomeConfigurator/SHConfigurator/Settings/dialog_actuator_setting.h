@@ -5,9 +5,8 @@
 #include <QInputDialog>
 #include <QMap>
 
-//#include "Application/Settings/InternalClass/actuator_setting.h"
-#include "Settings/dialog_actuator_edit.h"
-#include "Settings/dialog_placement_setting.h"
+#include "InternalClass/actuator_setting.h"
+#include "InternalClass/setting_containers.h"
 
 namespace Ui {
 class Dialog_Actuator_Setting;
@@ -22,8 +21,16 @@ public:
     explicit Dialog_Actuator_Setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Actuator_Setting();
 
+private slots:
+
+
+    void on_tableWidget_actuators_cellDoubleClicked(int row, int column);
+
 private:
     void create_table_actuator();
+    void fill_table_actuator();
+    void add_row_actuator(Actuator_Setting elem);
+    void delete_actuator_from_list(int id);
 
 private:
     Ui::Dialog_Actuator_Setting *ui;

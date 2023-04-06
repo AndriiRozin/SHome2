@@ -9,6 +9,12 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    InternalClass/actuator_setting.cpp \
+    InternalClass/net_setting.cpp \
+    InternalClass/placement_setting.cpp \
+    InternalClass/sensor_setting.cpp \
+    InternalClass/setting_containers.cpp \
+    InternalClass/signal_setting.cpp \
     Settings/dialog_actuator_edit.cpp \
     Settings/dialog_actuator_setting.cpp \
     Settings/dialog_cannodeedit.cpp \
@@ -18,11 +24,16 @@ SOURCES += \
     Settings/dialog_sensor_edit.cpp \
     Settings/dialog_sensor_setting.cpp \
     Settings/dialog_signal_setting.cpp \
-    Settings/setting_containers.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    InternalClass/actuator_setting.h \
+    InternalClass/net_setting.h \
+    InternalClass/placement_setting.h \
+    InternalClass/sensor_setting.h \
+    InternalClass/setting_containers.h \
+    InternalClass/signal_setting.h \
     Settings/dialog_actuator_edit.h \
     Settings/dialog_actuator_setting.h \
     Settings/dialog_cannodeedit.h \
@@ -32,7 +43,6 @@ HEADERS += \
     Settings/dialog_sensor_edit.h \
     Settings/dialog_sensor_setting.h \
     Settings/dialog_signal_setting.h \
-    Settings/setting_containers.h \
     mainwindow.h
 
 FORMS += \

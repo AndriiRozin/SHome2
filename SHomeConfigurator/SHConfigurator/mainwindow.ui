@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>387</width>
+    <height>288</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="pushButton_Net">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>110</y>
+      <x>50</x>
+      <y>30</y>
       <width>93</width>
       <height>29</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QPushButton" name="pushButton_Placement">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>160</y>
+      <x>50</x>
+      <y>80</y>
       <width>93</width>
       <height>29</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QPushButton" name="pushButton_Actuator">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>200</y>
+      <x>50</x>
+      <y>120</y>
       <width>93</width>
       <height>29</height>
      </rect>
@@ -56,8 +56,8 @@
    <widget class="QPushButton" name="pushButton_Sensor">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>240</y>
+      <x>50</x>
+      <y>160</y>
       <width>93</width>
       <height>29</height>
      </rect>
@@ -69,8 +69,8 @@
    <widget class="QPushButton" name="pushButton_Signals">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>280</y>
+      <x>50</x>
+      <y>200</y>
       <width>93</width>
       <height>29</height>
      </rect>
@@ -85,7 +85,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>387</width>
      <height>26</height>
     </rect>
    </property>

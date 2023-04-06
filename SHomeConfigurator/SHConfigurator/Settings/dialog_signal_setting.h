@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QInputDialog>
 
-#include "Settings/setting_containers.h"
+#include "InternalClass/setting_containers.h"
 
 namespace Ui {
 class Dialog_Signal_Setting;
@@ -20,13 +20,16 @@ public:
     ~Dialog_Signal_Setting();
 
 private:
-   void create_table_signal();
+    void create_table_signal();
+    void fill_table_signal();
+    void add_row_signal(Signal_Setting elem);
+    //void delete_signal_from_list(int id);
 
 private:
-   Ui::Dialog_Signal_Setting *ui;
-   Setting_Containers * p_containers;
+    Ui::Dialog_Signal_Setting *ui;
+    Setting_Containers * p_containers;
 
-   QStringList table_header = {"Name", "ID", "Offset", "Scale", "Init Value", "Error Value", "Description"};
+    QStringList table_header = {"Name", "ID", "Offset", "Scale", "Init Value", "Error Value", "Description"};
 };
 
 #endif // DIALOG_SIGNAL_SETTING_H
