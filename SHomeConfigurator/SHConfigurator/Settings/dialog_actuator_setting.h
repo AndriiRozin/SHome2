@@ -7,9 +7,6 @@
 
 #include "InternalClass/actuator_setting.h"
 #include "InternalClass/setting_containers.h"
-//#include "Application/Settings/dialog_actuator_edit.h"
-//#include "Application/Settings/dialog_placement_setting.h"
-
 
 namespace Ui {
 class Dialog_Actuator_Setting;
@@ -23,6 +20,11 @@ class Dialog_Actuator_Setting : public QDialog
 public:
     explicit Dialog_Actuator_Setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Actuator_Setting();
+
+private slots:
+
+
+    void on_tableWidget_actuators_cellDoubleClicked(int row, int column);
 
 private:
     void create_table_actuator();

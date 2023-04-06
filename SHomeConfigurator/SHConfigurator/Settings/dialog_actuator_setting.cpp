@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+#include "Settings/dialog_actuator_edit.h"
+
 Dialog_Actuator_Setting::Dialog_Actuator_Setting(QWidget *parent, Setting_Containers * containers) :
     QDialog(parent),
     ui(new Ui::Dialog_Actuator_Setting),
@@ -55,5 +57,16 @@ void Dialog_Actuator_Setting::fill_table_actuator()
         Actuator_Setting tmp = p_containers->actuators_map[i];
         add_row_actuator(tmp);
     }
+}
+
+
+void Dialog_Actuator_Setting::on_tableWidget_actuators_cellDoubleClicked(int row, int column)
+{
+    // Need to correct to edit Actuators !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     Actuator_Setting currentActuator = p_containers->actuators_map[row];
+     Dialog_Actuator_Edit mDialog_Actuator_edit(this, p_containers);
+     mDialog_Actuator_edit.set_actuator(currentActuator);
+     mDialog_Actuator_edit.setModal(true);
+     mDialog_Actuator_edit.exec();
 }
 

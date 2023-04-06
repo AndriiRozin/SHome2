@@ -27,13 +27,10 @@ QString Placement_Setting::get_description()
     return description;
 }
 
-
-
 void Placement_Setting::set_name(const QString value)
 {
     name = value;
 }
-
 
 void Placement_Setting::set_id(const int value)
 {

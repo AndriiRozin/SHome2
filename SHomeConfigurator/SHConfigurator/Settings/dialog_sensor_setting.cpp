@@ -4,6 +4,8 @@
 #include <QSettings>
 #include <QDebug>
 
+#include "Settings/dialog_sensor_edit.h"
+
 Dialog_Sensor_Setting::Dialog_Sensor_Setting(QWidget *parent, Setting_Containers * containers) :
     QDialog(parent),
     ui(new Ui::Dialog_Sensor_Setting),
@@ -12,8 +14,6 @@ Dialog_Sensor_Setting::Dialog_Sensor_Setting(QWidget *parent, Setting_Containers
     ui->setupUi(this);
     create_table_sensor();
     fill_table_sensor();
-
-    //qDebud() << p_containers->
 }
 
 Dialog_Sensor_Setting::~Dialog_Sensor_Setting()
@@ -58,3 +58,82 @@ void Dialog_Sensor_Setting::fill_table_sensor()
         add_row_sensor(tmp);
     }
 }
+
+void Dialog_Sensor_Setting::on_pushButton_add_clicked()
+{
+    QString new_name = QInputDialog::getText(this, tr("Input Sensor name"),
+                                             tr("Name"), QLineEdit::Normal);
+
+    int last_key = 0;
+    Sensor_Setting last_sensor;
+    Sensor_Setting new_sensor;
+
+    if(p_containers->sensors_map.isEmpty()) {
+        new_sensor = Sensor_Setting(new_name, last_sensor.get_id());
+    }
+    else {
+        last_key = p_containers->sensors_map.lastKey();
+        last_sensor = p_containers->sensors_map[last_key];
+        new_sensor = Sensor_Setting(new_name, last_sensor.get_id() + 1);
+    }
+
+    p_containers->sensors_map.insert(new_sensor.get_id(), new_sensor);
+    add_row_sensor(new_sensor);
+    fill_table_sensor();
+}
+
+
+void Dialog_Sensor_Setting::on_pushButton_delete_clicked()
+{
+    bool ok;
+    int delete_row = QInputDialog::getInt(this, tr("Input line"),
+                                          tr("Line"), 1, 1, p_containers->sensors_map.size(), 1, &ok);
+
+    if(ok) {
+        delete_sensor_from_list(delete_row - 1);
+        fill_table_sensor();
+    }
+}
+
+void Dialog_Sensor_Setting::delete_sensor_from_list(int id)
+{
+    p_containers->sensors_map.remove(id);
+
+    QList<int> keys = p_containers->sensors_map.keys();
+    foreach(int key, keys) {
+        if(key > id){
+            Sensor_Setting current_sensor = p_containers->sensors_map[key];
+            QString name = current_sensor.get_name();
+            Sensor_Setting new_sensor = Sensor_Setting(name, key-1);
+
+            p_containers->sensors_map.remove(key);
+            p_containers->sensors_map.insert(key-1, new_sensor);
+        }
+    }
+}
+
+void Dialog_Sensor_Setting::on_pushButton_save_clicked()
+{
+    p_containers->save_all_sensors_to_file();
+    close();
+}
+
+
+void Dialog_Sensor_Setting::on_pushButton_cancel_clicked()
+{
+    close();
+}
+
+
+void Dialog_Sensor_Setting::on_tableWidget_sensor_cellDoubleClicked(int row, int column)
+{
+    Sensor_Setting currentSensor = p_containers->sensors_map[row];
+    Dialog_Sensor_Edit mDialog_Sensor_edit(this, p_containers);
+    mDialog_Sensor_edit.set_sensor(currentSensor);
+    mDialog_Sensor_edit.setModal(true);
+    mDialog_Sensor_edit.exec();
+
+    ui->tableWidget_sensor->setRowCount(0);
+    fill_table_sensor();
+}
+
