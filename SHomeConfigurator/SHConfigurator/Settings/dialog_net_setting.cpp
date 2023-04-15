@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include "Settings/dialog_net_edit.h"
 
 Dialog_net_setting::Dialog_net_setting(QWidget *parent, Setting_Containers *containers) :
     QDialog(parent),
@@ -12,7 +13,6 @@ Dialog_net_setting::Dialog_net_setting(QWidget *parent, Setting_Containers *cont
     ui->setupUi(this);
     create_table_net();
     fill_table_net();
-    //qDebug() << p_containers->
 }
 
 Dialog_net_setting::~Dialog_net_setting()

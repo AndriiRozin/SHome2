@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include "Settings/dialog_placement_edit.h"
 
 Dialog_Placement_Setting::Dialog_Placement_Setting(QWidget *parent, Setting_Containers *containers) :
     QDialog(parent),
@@ -12,8 +13,6 @@ Dialog_Placement_Setting::Dialog_Placement_Setting(QWidget *parent, Setting_Cont
     ui->setupUi(this);
     create_table_placement();
     fill_table_placement();
-
-    //qDebug() << p_containers->
 }
 
 Dialog_Placement_Setting::~Dialog_Placement_Setting()
@@ -59,30 +58,21 @@ void Dialog_Placement_Setting::add_row_placement(Placement_Setting elem)
     //create new items->columns in current row
 }
 
-
-
 void Dialog_Placement_Setting::on_pushButton_add_clicked()
 {
-    QString new_name = QInputDialog::getText(this, tr("Input placement name"),
-                                             tr("Name"), QLineEdit::Normal);
+    Dialog_Placement_Edit mDialog_Place_edit(this, p_containers);
+    mDialog_Place_edit.setModal(true);
+    mDialog_Place_edit.exec();
 
-    int last_key = 0;
-    Placement_Setting last_place;
     Placement_Setting new_place;
+    new_place = mDialog_Place_edit.get_place();
 
-    if(p_containers->placements_map.isEmpty()) {
-        new_place = Placement_Setting(new_name, last_place.get_id(), last_place.get_description());
-        qDebug() << __FUNCTION__ << __LINE__;
+    // added new net to containers
+    if(new_place.get_id() >= 0)
+    {
+        p_containers->placements_map.insert(new_place.get_id(), new_place);
+        fill_table_placement();
     }
-    else {
-        last_key = p_containers->placements_map.lastKey();
-        last_place = p_containers->placements_map[last_key];
-        new_place = Placement_Setting(new_name, last_place.get_id() + 1, "...");
-    }
-
-    p_containers->placements_map.insert(new_place.get_id(), new_place);
-    add_row_placement(new_place);
-    fill_table_placement();
 }
 
 void Dialog_Placement_Setting::on_pushButton_delete_clicked()
@@ -125,5 +115,24 @@ void Dialog_Placement_Setting::on_pushButton_save_clicked()
 void Dialog_Placement_Setting::on_pushButton_close_clicked()
 {
     close();
+}
+
+void Dialog_Placement_Setting::on_tableWidget_placement_cellDoubleClicked(int row, int column)
+{
+    Placement_Setting currentPlace = p_containers->placements_map[row];
+    Dialog_Placement_Edit mDialog_Place_edit(this, p_containers);
+    mDialog_Place_edit.edit_place(currentPlace);
+    mDialog_Place_edit.setModal(true);
+    mDialog_Place_edit.exec();
+
+    Placement_Setting new_place;
+    new_place = mDialog_Place_edit.get_place();
+
+    // added new net to containers
+    if(new_place.get_id() >= 0)
+    {
+        p_containers->placements_map.insert(new_place.get_id(), new_place);
+        fill_table_placement();
+    }
 }
 

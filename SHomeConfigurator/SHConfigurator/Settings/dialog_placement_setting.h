@@ -21,11 +21,15 @@ public:
     explicit Dialog_Placement_Setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Placement_Setting();
 
+    Placement_Setting get_place();
+
 private slots:
     void on_pushButton_add_clicked();
     void on_pushButton_delete_clicked();
     void on_pushButton_save_clicked();
     void on_pushButton_close_clicked();
+
+    void on_tableWidget_placement_cellDoubleClicked(int row, int column);
 
 private:
      void create_table_placement();

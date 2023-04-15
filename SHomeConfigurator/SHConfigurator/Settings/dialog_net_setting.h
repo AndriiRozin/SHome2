@@ -8,8 +8,6 @@
 #include "InternalClass/setting_containers.h"
 #include "InternalClass/net_setting.h"
 
-#include "Settings/dialog_net_edit.h"
-
 namespace Ui {
 class Dialog_net_setting;
 }
