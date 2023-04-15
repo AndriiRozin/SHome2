@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include "Settings/dialog_net_edit.h"
 
 Dialog_net_setting::Dialog_net_setting(QWidget *parent, Setting_Containers *containers) :
     QDialog(parent),
@@ -12,7 +13,6 @@ Dialog_net_setting::Dialog_net_setting(QWidget *parent, Setting_Containers *cont
     ui->setupUi(this);
     create_table_net();
     fill_table_net();
-    //qDebug() << p_containers->
 }
 
 Dialog_net_setting::~Dialog_net_setting()
@@ -59,27 +59,20 @@ void Dialog_net_setting::add_row_net(Net_Setting elem)
 
 void Dialog_net_setting::on_pushButton_add_clicked()
 {
-    QString new_name = QInputDialog::getText(this, tr("Input placement name"),
-                                              tr("Name"), QLineEdit::Normal);
+    Dialog_Net_Edit mDialog_Net_edit(this, p_containers);
+    mDialog_Net_edit.setModal(true);
+    mDialog_Net_edit.exec();
 
-     int last_key = 0;
-     Net_Setting last_net;
-     Net_Setting new_net;
+    Net_Setting new_net;
+    new_net = mDialog_Net_edit.get_net();
 
-     if(p_containers->networks_map.isEmpty()) {
-         new_net = Net_Setting(new_name, last_net.get_id(), last_net.get_description());
-     }
-     else {
-         last_key = p_containers->networks_map.lastKey();
-         last_net = p_containers->networks_map[last_key];
-         new_net = Net_Setting(new_name, last_net.get_id() + 1, "...");
-     }
-
-     p_containers->networks_map.insert(new_net.get_id(), new_net);
-     add_row_net(new_net);
-     fill_table_net();
+    // added new net to containers
+    if(new_net.get_id() >= 0)
+    {
+        p_containers->networks_map.insert(new_net.get_id(), new_net);
+        fill_table_net();
+    }
 }
-
 
 void Dialog_net_setting::on_pushButton_delete_clicked()
 {
@@ -116,9 +109,27 @@ void Dialog_net_setting::on_pushButton_save_clicked()
     close();
 }
 
-
 void Dialog_net_setting::on_pushButton_cancel_clicked()
 {
     close();
+}
+
+void Dialog_net_setting::on_tableWidget_net_cellDoubleClicked(int row, int column)
+{
+    Net_Setting currentNet = p_containers->networks_map[row];
+    Dialog_Net_Edit mDialog_Net_edit(this, p_containers);
+    mDialog_Net_edit.edit_net(currentNet);
+    mDialog_Net_edit.setModal(true);
+    mDialog_Net_edit.exec();
+
+    Net_Setting new_net;
+    new_net = mDialog_Net_edit.get_net();
+
+    // added new net to containers
+    if(new_net.get_id() >= 0)
+    {
+        p_containers->networks_map.insert(new_net.get_id(), new_net);
+        fill_table_net();
+    }
 }
 

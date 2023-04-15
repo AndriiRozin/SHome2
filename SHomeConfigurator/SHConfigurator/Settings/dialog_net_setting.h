@@ -27,6 +27,8 @@ private slots:
     void on_pushButton_save_clicked();
     void on_pushButton_cancel_clicked();
 
+    void on_tableWidget_net_cellDoubleClicked(int row, int column);
+
 private:
     void create_table_net();
     void fill_table_net();
