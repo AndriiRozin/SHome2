@@ -18,6 +18,7 @@ SOURCES += \
     Settings/dialog_actuator_edit.cpp \
     Settings/dialog_actuator_setting.cpp \
     Settings/dialog_cannodeedit.cpp \
+    Settings/dialog_net_edit.cpp \
     Settings/dialog_net_setting.cpp \
     Settings/dialog_placement_setting.cpp \
     Settings/dialog_sasetting.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     Settings/dialog_actuator_edit.h \
     Settings/dialog_actuator_setting.h \
     Settings/dialog_cannodeedit.h \
+    Settings/dialog_net_edit.h \
     Settings/dialog_net_setting.h \
     Settings/dialog_placement_setting.h \
     Settings/dialog_sasetting.h \
@@ -49,6 +51,7 @@ FORMS += \
     Settings/dialog_actuator_edit.ui \
     Settings/dialog_actuator_setting.ui \
     Settings/dialog_cannodeedit.ui \
+    Settings/dialog_net_edit.ui \
     Settings/dialog_net_setting.ui \
     Settings/dialog_placement_setting.ui \
     Settings/dialog_sasetting.ui \

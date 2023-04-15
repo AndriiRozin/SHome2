@@ -8,6 +8,8 @@
 #include "InternalClass/setting_containers.h"
 #include "InternalClass/net_setting.h"
 
+#include "Settings/dialog_net_edit.h"
+
 namespace Ui {
 class Dialog_net_setting;
 }
@@ -26,6 +28,8 @@ private slots:
     void on_pushButton_delete_clicked();
     void on_pushButton_save_clicked();
     void on_pushButton_cancel_clicked();
+
+    void on_tableWidget_net_cellDoubleClicked(int row, int column);
 
 private:
     void create_table_net();
