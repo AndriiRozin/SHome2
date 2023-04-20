@@ -91,9 +91,9 @@ void Setting_Containers::read_all_signals_from_file(QString filename)
         new_signal.set_id(settings.value("Id").toInt());
         new_signal.set_description(settings.value("Description").toString());
         new_signal.set_offset(settings.value("Offset").toDouble());
-        new_signal.set_scale(settings.value("Scale").toDouble());
-        new_signal.set_initSourceValue(settings.value("InitSourceValue").toInt());
-        new_signal.set_errSourceValue(settings.value("Err_sourceValue").toInt());
+        new_signal.set_factor(settings.value("Scale").toDouble());
+        new_signal.set_initRawValue(settings.value("InitSourceValue").toInt());
+        new_signal.set_errRawValue(settings.value("Err_sourceValue").toInt());
         new_signal.set_maxValue(settings.value("MaxValue").toDouble());
         new_signal.set_minValue(settings.value("MinValue").toDouble());
         new_signal.set_signalStatus(enum_signal_status::INIT);
@@ -286,9 +286,9 @@ void Setting_Containers::save_all_signals_to_file()
         settings.setValue("Id", mySignal.get_id());
         settings.setValue("Description",mySignal.get_description());
         settings.setValue("Offset",mySignal.get_offset());
-        settings.setValue("Scale",mySignal.get_scale());
-        settings.setValue("InitSourceValue",mySignal.get_initSourceValue());
-        settings.setValue("Err_sourceValue",mySignal.get_errSourceValue());
+        settings.setValue("Scale",mySignal.get_factor());
+        settings.setValue("InitSourceValue",mySignal.get_initRawValue());
+        settings.setValue("Err_sourceValue",mySignal.get_errRawValue());
         settings.setValue("MaxValue",mySignal.get_maxValue());
         settings.setValue("MinValue",mySignal.get_minValue());
 

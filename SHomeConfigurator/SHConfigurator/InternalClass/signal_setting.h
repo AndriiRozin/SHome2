@@ -30,28 +30,23 @@ public:
     void set_description(const QString value);
     QString get_description();
 
+    void set_initRawValue(const uint value);
+    uint get_initRawValue();
 
+    void set_errRawValue(const uint value);
+    uint get_errRawValue();
 
-    void set_initSourceValue(const uint value);
-    uint get_initSourceValue();
+    void set_rawValue(const uint value);
+    uint get_rawValue();
 
-    void set_errSourceValue(const uint value);
-    uint get_errSourceValue();
-
-    void set_sourceValue(const uint value);
-    uint get_sourceValue();
-
-    void set_calculatedValue(const double value);
-    double get_calculatedValue();
-
-
+    void set_physicalValue(const double value);
+    double get_physicalValue();
 
     void set_offset(const double value);
     double get_offset();
 
-    void set_scale(const double value);
-    double get_scale();
-
+    void set_factor(const double value);
+    double get_factor();
 
     void set_maxValue(const double value);
     double get_maxValue();
@@ -67,14 +62,14 @@ private:
     int signal_id;
     QString description;
 
-    uint init_sourceValue;
-    uint err_sourceValue;
+    uint init_rawValue;
+    uint err_rawValue;
 
-    uint sourceValue;
-    double  calculatedValue;
+    uint rawValue;
+    double  physicalValue;
 
     double offset;
-    double scale;
+    double factor;
     double maxValue;
     double minValue;
 

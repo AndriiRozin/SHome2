@@ -57,9 +57,9 @@ void Dialog_Actuator_Edit::on_comboBox_signalValue_currentIndexChanged(const QSt
         ui->label_name->setText(current.get_name());
         ui->label_id->setText(QString::number(current.get_id()));
         ui->label_offset->setText(QString::number(current.get_offset()));
-        ui->label_scale->setText(QString::number(current.get_scale()));
-        ui->label_Init->setText(QString::number(current.get_initSourceValue()));
-        ui->label_Error->setText(QString::number(current.get_errSourceValue()));
+        ui->label_scale->setText(QString::number(current.get_factor()));
+        ui->label_Init->setText(QString::number(current.get_initRawValue()));
+        ui->label_Error->setText(QString::number(current.get_errRawValue()));
         ui->label_Description->setText(current.get_description());
         qDebug() << __FUNCTION__ << current.get_id();
     }

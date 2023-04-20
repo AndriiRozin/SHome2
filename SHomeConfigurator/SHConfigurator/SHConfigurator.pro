@@ -26,6 +26,7 @@ SOURCES += \
     Settings/dialog_sensor_edit.cpp \
     Settings/dialog_sensor_setting.cpp \
     Settings/dialog_setup.cpp \
+    Settings/dialog_signal_edit.cpp \
     Settings/dialog_signal_setting.cpp \
     main.cpp \
     mainwindow.cpp
@@ -48,6 +49,7 @@ HEADERS += \
     Settings/dialog_sensor_edit.h \
     Settings/dialog_sensor_setting.h \
     Settings/dialog_setup.h \
+    Settings/dialog_signal_edit.h \    
     Settings/dialog_signal_setting.h \
     mainwindow.h
 
@@ -62,7 +64,8 @@ FORMS += \
     Settings/dialog_sasetting.ui \
     Settings/dialog_sensor_edit.ui \
     Settings/dialog_sensor_setting.ui \
-    Settings/dialog_setup.ui \
+    Settings/dialog_setup.ui \    
+    Settings/dialog_signal_edit.ui \
     Settings/dialog_signal_setting.ui \
     mainwindow.ui
 
