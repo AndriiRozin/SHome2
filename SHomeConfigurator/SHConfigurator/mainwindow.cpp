@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 
+#include "Settings/dialog_setup.h"
 #include "Settings/dialog_net_setting.h"
 #include "Settings/dialog_placement_setting.h"
 #include "Settings/dialog_actuator_setting.h"
@@ -69,3 +70,10 @@ void MainWindow::on_pushButton_Signals_clicked()
     mDialogSensor.exec();
 }
 
+
+void MainWindow::on_pushButton_Setup_clicked()
+{
+    Dialog_Setup mDialogSetup(this);
+    mDialogSetup.setModal(true);
+    mDialogSetup.exec();
+}
