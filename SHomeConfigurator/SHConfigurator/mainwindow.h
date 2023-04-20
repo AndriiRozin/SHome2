@@ -32,6 +32,8 @@ private slots:
 
     void on_pushButton_Signals_clicked();
 
+    void on_pushButton_Setup_clicked();
+
 private:
     Ui::MainWindow *ui;
     Setting_Containers * pSettingContainers;

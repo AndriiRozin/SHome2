@@ -10,21 +10,35 @@ Setting_Containers::Setting_Containers():
     placements_map(),
     signals_map(),
     actuators_map(),
-    sensors_map()
+    sensors_map(),
+    pathToini(),
+    pathToIni_net(),
+    pathToIni_place(),
+    pathToIni_signal(),
+    pathToIni_sensor(),
+    pathToIni_actuator()
 
 {
+    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
+    settings.beginGroup("INIT_Files");
+    pathToini = settings.value("Folder").toString();
+    pathToIni_net = settings.value("Net").toString();
+    pathToIni_place = settings.value("Place").toString();
+    pathToIni_signal = settings.value("Signal").toString();
+    pathToIni_sensor = settings.value("Sensor").toString();
+    pathToIni_actuator = settings.value("Actuator").toString();
+    settings.endGroup();
 
-
-    read_all_networks_from_file();
-    read_all_placements_from_file();
-    read_all_signals_from_file();
-    read_all_actuators_from_file();
-    read_all_sensors_from_file();
+    read_all_networks_from_file(pathToIni_net);
+    read_all_placements_from_file(pathToIni_place);
+    read_all_signals_from_file(pathToIni_signal);
+    read_all_actuators_from_file(pathToIni_actuator);
+    read_all_sensors_from_file(pathToIni_sensor);
 }
 
-void Setting_Containers::read_all_networks_from_file()
+void Setting_Containers::read_all_networks_from_file(QString filename)
 {
-    QSettings  settings(pathToini + "Net.ini", QSettings::IniFormat);
+    QSettings  settings(filename, QSettings::IniFormat);
     QStringList nets_lst = settings.childGroups();
 
     foreach(QString net, nets_lst){
@@ -42,9 +56,9 @@ void Setting_Containers::read_all_networks_from_file()
     }
 }
 
-void Setting_Containers::read_all_placements_from_file()
+void Setting_Containers::read_all_placements_from_file(QString filename)
 {
-    QSettings  settings(pathToini + "Placement.ini", QSettings::IniFormat);
+    QSettings  settings(filename, QSettings::IniFormat);
     QStringList placement_lst = settings.childGroups();
 
     foreach(QString placement, placement_lst){
@@ -62,9 +76,9 @@ void Setting_Containers::read_all_placements_from_file()
     }
 }
 
-void Setting_Containers::read_all_signals_from_file()
+void Setting_Containers::read_all_signals_from_file(QString filename)
 {
-    QSettings  settings(pathToini + "signals.ini", QSettings::IniFormat);
+    QSettings  settings(filename, QSettings::IniFormat);
     QStringList signal_lst = settings.childGroups();
 
     Signal_Setting new_signal;
@@ -89,9 +103,9 @@ void Setting_Containers::read_all_signals_from_file()
     }
 }
 
-void Setting_Containers::read_all_actuators_from_file()
+void Setting_Containers::read_all_actuators_from_file(QString filename)
 {
-    QSettings  settings(pathToini + "actuator.ini", QSettings::IniFormat);
+    QSettings  settings(filename, QSettings::IniFormat);
     QStringList actuators_lst = settings.childGroups();
 
     // create AbstractSensor for each
@@ -126,9 +140,9 @@ void Setting_Containers::read_all_actuators_from_file()
     }
 }
 
-void Setting_Containers::read_all_sensors_from_file()
+void Setting_Containers::read_all_sensors_from_file(QString filename)
 {
-    QSettings  settings(pathToini + "sensor.ini", QSettings::IniFormat);
+    QSettings  settings(filename, QSettings::IniFormat);
     QStringList sensors_lst = settings.childGroups();
 
     // create AbstractSensor for each sensor
@@ -170,7 +184,7 @@ void Setting_Containers::read_all_sensors_from_file()
 
 void Setting_Containers::save_all_networks_to_file()
 {
-    QSettings  settings(pathToini + "Net.ini", QSettings::IniFormat);
+    QSettings  settings(pathToIni_net, QSettings::IniFormat);
 
     settings.clear();
 
@@ -190,7 +204,7 @@ void Setting_Containers::save_all_networks_to_file()
 
 void Setting_Containers::save_all_placements_to_file()
 {
-    QSettings  settings(pathToini + "Placement.ini", QSettings::IniFormat);
+    QSettings  settings(pathToIni_place, QSettings::IniFormat);
     settings.clear();
 
     // create Placement for each Placements
@@ -210,7 +224,7 @@ void Setting_Containers::save_all_placements_to_file()
 
 void Setting_Containers::save_all_sensors_to_file()
 {
-    QSettings  settings(pathToini + "sensor.ini", QSettings::IniFormat);
+    QSettings  settings(pathToIni_sensor, QSettings::IniFormat);
     settings.clear();
 
     // create AbstractSensor for each sensor
@@ -234,7 +248,7 @@ void Setting_Containers::save_all_sensors_to_file()
 
 void Setting_Containers::save_all_actuators_to_file()
 {
-    QSettings  settings(pathToini + "actuator.ini", QSettings::IniFormat);
+    QSettings  settings(pathToIni_actuator, QSettings::IniFormat);
     settings.clear();
 
     // create AbstractSensor for each sensor
@@ -258,7 +272,7 @@ void Setting_Containers::save_all_actuators_to_file()
 
 void Setting_Containers::save_all_signals_to_file()
 {
-    QSettings  settings(pathToini + "signals.ini", QSettings::IniFormat);
+    QSettings  settings(pathToIni_signal, QSettings::IniFormat);
     settings.clear();
 
     // create AbstractSensor for each sensor

@@ -14,11 +14,11 @@ class Setting_Containers
 public:
     Setting_Containers();
 
-    void read_all_networks_from_file();
-    void read_all_placements_from_file();
-    void read_all_signals_from_file();
-    void read_all_actuators_from_file();
-    void read_all_sensors_from_file();
+    void read_all_networks_from_file(QString filename);
+    void read_all_placements_from_file(QString filename);
+    void read_all_signals_from_file(QString filename);
+    void read_all_actuators_from_file(QString filename);
+    void read_all_sensors_from_file(QString filename);
 
     void save_all_networks_to_file();
     void save_all_placements_to_file();
@@ -42,7 +42,14 @@ public:
     QMap<int, Sensor_Setting> sensors_map;
 
 private:
-    QString pathToini = "C:\\smart_home_setting\\";
+    //QString pathToini = "C:\\smart_home_setting\\";
+    //QString pathToini = "/home/andrii/Arozin/SHome2/smart_home_setting/";
+    QString pathToini;
+    QString pathToIni_net;
+    QString pathToIni_place;
+    QString pathToIni_signal;
+    QString pathToIni_sensor;
+    QString pathToIni_actuator;
 };
 
 #endif // SETTING_CONTAINERS_H
