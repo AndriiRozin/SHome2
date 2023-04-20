@@ -222,10 +222,6 @@ void Dialog_Setup::on_pushButton_Net_Change_clicked()
                                             "Select INI File",
                                             dirToIni,
                                             "Images (*.ini )");
-    // get filename
-    QFileInfo fi(file_net);
-    QString fileName = fi.fileName();
-
     // get directory
     QDir dir(file_net);
     dir.cdUp();
@@ -243,10 +239,6 @@ void Dialog_Setup::on_pushButton_Placement_Change_clicked()
                                               "Select INI File",
                                               dirToIni,
                                               "Images (*.ini )");
-    // get filename
-    QFileInfo fi(file_place);
-    QString fileName = fi.fileName();
-
     // get directory
     QDir dir(file_place);
     dir.cdUp();
@@ -264,10 +256,6 @@ void Dialog_Setup::on_pushButton_Signal_Change_clicked()
                                                "Select INI File",
                                                dirToIni,
                                                "Images (*.ini )");
-    // get filename
-    QFileInfo fi(file_signal);
-    QString fileName = fi.fileName();
-
     // get directory
     QDir dir(file_signal);
     dir.cdUp();
@@ -285,10 +273,6 @@ void Dialog_Setup::on_pushButton_Sensor_Change_clicked()
                                                "Select INI File",
                                                dirToIni,
                                                "Images (*.ini )");
-    // get filename
-    QFileInfo fi(file_sensor);
-    QString fileName = fi.fileName();
-
     // get directory
     QDir dir(file_sensor);
     dir.cdUp();
@@ -306,10 +290,6 @@ void Dialog_Setup::on_pushButton_ACtuator_Change_clicked()
                                                  "Select INI File",
                                                  dirToIni,
                                                  "Images (*.ini )");
-    // get filename
-    QFileInfo fi(file_actuator);
-    QString fileName = fi.fileName();
-
     // get directory
     QDir dir(file_actuator);
     dir.cdUp();

@@ -42,8 +42,6 @@ public:
     QMap<int, Sensor_Setting> sensors_map;
 
 private:
-    //QString pathToini = "C:\\smart_home_setting\\";
-    //QString pathToini = "/home/andrii/Arozin/SHome2/smart_home_setting/";
     QString pathToini;
     QString pathToIni_net;
     QString pathToIni_place;

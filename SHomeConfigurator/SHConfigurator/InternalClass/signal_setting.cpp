@@ -3,7 +3,7 @@
 
 Signal_Setting::Signal_Setting():
     offset(0),
-    scale(1),
+    factor(1),
     signalStatus(PRE_INIT)
 {}
 
@@ -44,27 +44,27 @@ double Signal_Setting::get_offset()
     return offset;
 }
 
-void Signal_Setting::set_scale(const double value)
+void Signal_Setting::set_factor(const double value)
 {
-    scale = value;
+    factor = value;
 }
 
-double Signal_Setting::get_scale()
+double Signal_Setting::get_factor()
 {
-    return scale;
+    return factor;
 }
 
-void Signal_Setting::set_sourceValue(const uint value)
+void Signal_Setting::set_rawValue(const uint value)
 {
-    sourceValue = value;
-    calculatedValue = (sourceValue*scale)+ offset;
+    rawValue = value;
+    physicalValue = (rawValue*factor)+ offset;
 
-    if(calculatedValue > maxValue) {
-        calculatedValue = maxValue;
+    if(physicalValue > maxValue) {
+        physicalValue = maxValue;
         signalStatus = E_NOT_OK_MAX;
     }
-    else if (calculatedValue < minValue) {
-        calculatedValue = minValue;
+    else if (physicalValue < minValue) {
+        physicalValue = minValue;
         signalStatus = E_NOT_OK_MIN;
     }
     else {
@@ -72,56 +72,56 @@ void Signal_Setting::set_sourceValue(const uint value)
     }
 }
 
-uint Signal_Setting::get_sourceValue()
+uint Signal_Setting::get_rawValue()
 {
-    return sourceValue;
+    return rawValue;
 }
 
-void Signal_Setting::set_calculatedValue(const double value)
+void Signal_Setting::set_physicalValue(const double value)
 {
-    if(scale == 0) {
+    if(factor == 0) {
         signalStatus = E_NOT_OK_DIVISION;
-        set_sourceValue(err_sourceValue);
+        set_rawValue(err_rawValue);
     }
     else {
         if(value > maxValue) {
-            calculatedValue = maxValue;
+            physicalValue = maxValue;
             signalStatus = E_NOT_OK_MAX;
         }
         else if (value < minValue) {
-            calculatedValue = minValue;
+            physicalValue = minValue;
             signalStatus = E_NOT_OK_MIN;
         }
         else {
-            calculatedValue = value;
+            physicalValue = value;
             signalStatus = E_OK;
         }
-        sourceValue = (calculatedValue - offset) / scale;
+        rawValue = (physicalValue - offset) / factor;
     }
 }
 
-double Signal_Setting::get_calculatedValue()
+double Signal_Setting::get_physicalValue()
 {
-    return calculatedValue;
+    return physicalValue;
 }
 
-void Signal_Setting::set_initSourceValue(const uint value)
+void Signal_Setting::set_initRawValue(const uint value)
 {
-    init_sourceValue = value;
+    init_rawValue = value;
 }
 
-uint Signal_Setting::get_initSourceValue()
+uint Signal_Setting::get_initRawValue()
 {
-    return init_sourceValue;
+    return init_rawValue;
 }
 
-void Signal_Setting::set_errSourceValue(const uint value){
-    err_sourceValue = value;
+void Signal_Setting::set_errRawValue(const uint value){
+    err_rawValue = value;
 }
 
-uint Signal_Setting::get_errSourceValue()
+uint Signal_Setting::get_errRawValue()
 {
-    return err_sourceValue;
+    return err_rawValue;
 }
 
 void Signal_Setting::set_maxValue(const double value)
@@ -148,7 +148,7 @@ void Signal_Setting::set_signalStatus(const int value)
 {
     signalStatus = value;
     if(signalStatus == INIT) {
-        set_sourceValue(init_sourceValue);
+        set_rawValue(init_rawValue);
         signalStatus = INIT;
     }
 }

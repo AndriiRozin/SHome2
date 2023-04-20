@@ -118,15 +118,15 @@ void Dialog_Sensor_Edit::print_sensor()
     ui->label_name->setText(sensor.get_signal().get_name());
     ui->label_id->setText(QString::number(sensor.get_signal().get_id()));
     ui->label_offset->setText(QString::number(sensor.get_signal().get_offset()));
-    ui->label_scale->setText(QString::number(sensor.get_signal().get_scale()));
-    ui->label_Init->setText(QString::number(sensor.get_signal().get_initSourceValue()));
-    ui->label_Error->setText(QString::number(sensor.get_signal().get_errSourceValue()));
+    ui->label_scale->setText(QString::number(sensor.get_signal().get_factor()));
+    ui->label_Init->setText(QString::number(sensor.get_signal().get_initRawValue()));
+    ui->label_Error->setText(QString::number(sensor.get_signal().get_errRawValue()));
     ui->label_Description->setText(sensor.get_signal().get_description());
     ui->label_Max->setText(QString::number(sensor.get_signal().get_maxValue()));
     ui->label_Min->setText(QString::number(sensor.get_signal().get_minValue()));
 
-    ui->label_SourceValue->setText(QString::number(sensor.get_signal().get_sourceValue()));
-    ui->label_CalculatedValue->setText(QString::number(sensor.get_signal().get_calculatedValue()));
+    ui->label_SourceValue->setText(QString::number(sensor.get_signal().get_rawValue()));
+    ui->label_CalculatedValue->setText(QString::number(sensor.get_signal().get_physicalValue()));
 
     switch (sensor.get_signal().get_signalStatus()) {
     case enum_signal_status::PRE_INIT:
@@ -165,7 +165,7 @@ void Dialog_Sensor_Edit::on_buttonBox_accepted()
 void Dialog_Sensor_Edit::on_pushButton_sourceValue_clicked()
 {
     Signal_Setting current_signal = sensor.get_signal();
-    current_signal.set_sourceValue(ui->spinBox_SourceValue->value());
+    current_signal.set_rawValue(ui->spinBox_SourceValue->value());
     sensor.set_signal(current_signal);
     print_sensor();
 }
@@ -173,8 +173,8 @@ void Dialog_Sensor_Edit::on_pushButton_sourceValue_clicked()
 void Dialog_Sensor_Edit::on_pushButton_CalculateValue_clicked()
 {
     Signal_Setting current_signal = sensor.get_signal();
-    current_signal.set_calculatedValue(ui->doubleSpinBox_CalculateValue->value());
+    current_signal.set_physicalValue(ui->doubleSpinBox_CalculateValue->value());
     sensor.set_signal(current_signal);
     print_sensor();
-    qDebug() << __FUNCTION__ << ui->doubleSpinBox_CalculateValue->value() << current_signal.get_calculatedValue();
+    qDebug() << __FUNCTION__ << ui->doubleSpinBox_CalculateValue->value() << current_signal.get_physicalValue();
 }

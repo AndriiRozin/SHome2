@@ -19,6 +19,9 @@ public:
     explicit Dialog_Signal_Setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Signal_Setting();
 
+private slots:
+    void on_pushButton_add_clicked();
+
 private:
     void create_table_signal();
     void fill_table_signal();

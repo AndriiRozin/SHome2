@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+/SHConfigurator/.qtc_clangd/
+/build
+
