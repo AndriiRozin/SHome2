@@ -13,8 +13,6 @@ Dialog_Signal_Setting::Dialog_Signal_Setting(QWidget *parent, Setting_Containers
     ui->setupUi(this);
     create_table_signal();
     fill_table_signal();
-
-    qDebug()<< p_containers->signals_map.size();
 }
 
 Dialog_Signal_Setting::~Dialog_Signal_Setting()
@@ -27,7 +25,7 @@ void Dialog_Signal_Setting::create_table_signal()
     int tableColumns = table_header.size() ;
 
     //create table column
-    ui->tableWidget_signal ->setColumnCount(tableColumns);
+    ui->tableWidget_signal->setColumnCount(tableColumns);
     ui->tableWidget_signal->setShowGrid(true);
     ui->tableWidget_signal->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableWidget_signal->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -79,6 +77,31 @@ void Dialog_Signal_Setting::on_pushButton_add_clicked()
         p_containers->signals_map.insert(new_signal.get_id(), new_signal);
         fill_table_signal();
     }
-    qDebug()<< p_containers->signals_map.size();
+}
+
+
+void Dialog_Signal_Setting::on_tableWidget_signal_cellDoubleClicked(int row, int column)
+{
+    Signal_Setting currentSignal = p_containers->signals_map[row];
+    Dialog_Signal_Edit mDialog_Signal_edit(this, p_containers);
+    mDialog_Signal_edit.edit_signal(currentSignal);
+    mDialog_Signal_edit.setModal(true);
+    mDialog_Signal_edit.exec();
+    Signal_Setting new_signal;
+    new_signal = mDialog_Signal_edit.get_signal();
+
+    // added new net to containers
+    if(new_signal.get_id() >= 0)
+    {
+        p_containers->signals_map.insert(new_signal.get_id(), new_signal);
+        fill_table_signal();
+    }
+}
+
+
+void Dialog_Signal_Setting::on_pushButton_save_clicked()
+{
+    p_containers->save_all_signals_to_file();
+    close();
 }
 

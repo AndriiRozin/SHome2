@@ -12,8 +12,8 @@ Dialog_Signal_Edit::Dialog_Signal_Edit(QWidget *parent, Setting_Containers * new
 
 {
     ui->setupUi(this);
-    fill_table_signal_edit();
 }
+
 
 Dialog_Signal_Edit::~Dialog_Signal_Edit()
 {
@@ -36,10 +36,7 @@ void Dialog_Signal_Edit::fill_table_signal_edit()
 void Dialog_Signal_Edit::edit_signal(Signal_Setting new_signal)
 {
     current_signal = new_signal;
-
-    ui->lineEdit_name->setText(new_signal.get_name());
-    ui->lineEdit_description->setText(new_signal.get_description());
-    ui->spinBox_id->setValue(new_signal.get_id());
+    fill_table_signal_edit();
 }
 
 Signal_Setting  Dialog_Signal_Edit::get_signal()
