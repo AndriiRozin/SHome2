@@ -22,6 +22,10 @@ public:
 private slots:
     void on_pushButton_add_clicked();
 
+    void on_tableWidget_signal_cellDoubleClicked(int row, int column);
+
+    void on_pushButton_save_clicked();
+
 private:
     void create_table_signal();
     void fill_table_signal();
