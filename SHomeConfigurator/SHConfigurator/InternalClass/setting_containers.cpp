@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QMap>
 
+#include <QtXml>
+#include <QTextStream>
+
 
 Setting_Containers::Setting_Containers():
     networks_map(),
@@ -34,6 +37,128 @@ Setting_Containers::Setting_Containers():
     read_all_signals_from_file(pathToIni_signal);
     read_all_actuators_from_file(pathToIni_actuator);
     read_all_sensors_from_file(pathToIni_sensor);
+
+    write_to_xml("test_xml.xml");
+}
+
+void Setting_Containers::write_to_xml(QString filename)
+{
+    QDomDocument document;
+    QDomElement root = document.createElement("Environment");
+    document.appendChild(root);
+
+    QDomElement networks = document.createElement("Networks");
+    networks.setAttribute("Total",networks_map.size());
+    root.appendChild(networks);
+
+    QDomElement placement = document.createElement("Placement");
+    placement.setAttribute("Total", placements_map.size());
+    root.appendChild(placement);
+
+    QDomElement mysignals = document.createElement("Signals");
+    mysignals.setAttribute("Total", signals_map.size());
+    root.appendChild(mysignals);
+
+    QDomElement actuators = document.createElement("actuators");
+    actuators.setAttribute("Total", actuators_map.size());
+    root.appendChild(actuators);
+
+    QDomElement sensors = document.createElement("Sensors");
+    sensors.setAttribute("Total", sensors_map.size());
+    root.appendChild(sensors);
+
+
+    foreach(int key, networks_map.keys())
+    {
+        Net_Setting myNet = networks_map[key];
+
+        QDomElement net = document.createElement("net");
+        net.setAttribute("number", key);
+        net.setAttribute("id", myNet.get_id());
+        net.setAttribute("name", myNet.get_name());
+        net.setAttribute("description", myNet.get_description());
+        networks.appendChild(net);
+    }
+
+    foreach(int key, placements_map.keys())
+    {
+        Placement_Setting myPlacement = placements_map[key];
+
+        QDomElement place = document.createElement("place");
+        place.setAttribute("number", key);
+        place.setAttribute("id", myPlacement.get_id());
+        place.setAttribute("name", myPlacement.get_name());
+        place.setAttribute("description", myPlacement.get_description());
+        placement.appendChild(place);
+    }
+
+    foreach(int key, signals_map.keys())
+    {
+        Signal_Setting mySig = signals_map[key];
+
+        QDomElement sig = document.createElement("signal");
+        sig.setAttribute("number", key);
+        sig.setAttribute("name", mySig.get_name());
+        sig.setAttribute("id", mySig.get_id());
+        sig.setAttribute("description",mySig.get_description());
+        sig.setAttribute("offset",mySig.get_offset());
+        sig.setAttribute("scale",mySig.get_factor());
+        sig.setAttribute("initSourceValue",mySig.get_initRawValue());
+        sig.setAttribute("err_sourceValue",mySig.get_errRawValue());
+        sig.setAttribute("maxValue",mySig.get_maxValue());
+        sig.setAttribute("minValue",mySig.get_minValue());
+        mysignals.appendChild(sig);
+    }
+
+    foreach(int key, actuators_map.keys())
+    {
+        Actuator_Setting myActuator = actuators_map[key];
+        QDomElement actuator = document.createElement("actuator");
+
+        actuator.setAttribute("number", key);
+        actuator.setAttribute("Name", myActuator.get_name());
+        actuator.setAttribute("Id", myActuator.get_id());
+        actuator.setAttribute("description",myActuator.get_description());
+        actuator.setAttribute("plasement2",myActuator.get_placement2().get_id());
+        actuator.setAttribute("plasement1",myActuator.get_placement1().get_id());
+        actuator.setAttribute("plasement0",myActuator.get_placement0().get_id());
+        actuator.setAttribute("signal", myActuator.get_signal().get_id());
+        actuators.appendChild(actuator);
+    }
+
+    foreach(int key, sensors_map.keys())
+    {
+        Sensor_Setting mySensor = sensors_map[key];
+        QDomElement sensor = document.createElement("sensor");
+
+        sensor.setAttribute("number", key);
+        sensor.setAttribute("name", mySensor.get_name());
+        sensor.setAttribute("id", mySensor.get_id());
+        sensor.setAttribute("description",mySensor.get_description());
+        sensor.setAttribute("plasement2",mySensor.get_placement2().get_id());
+        sensor.setAttribute("plasement1",mySensor.get_placement1().get_id());
+        sensor.setAttribute("plasement0",mySensor.get_placement0().get_id());
+        sensor.setAttribute("signal", mySensor.get_signal().get_id());
+        sensors.appendChild(sensor);
+    }
+
+
+
+
+
+    qDebug() << "write_to_xml:" << filename;
+
+    QFile xmlFile(filename);
+    if (!xmlFile.open(QFile::WriteOnly | QFile::Text ))
+    {
+        qDebug() << "Open the file for writing failed";
+    }
+    else
+    {
+        QTextStream xmlContent(&xmlFile);
+        xmlContent << document.toString();
+        xmlFile.close();
+    }
 }
 
 void Setting_Containers::read_all_networks_from_file(QString filename)

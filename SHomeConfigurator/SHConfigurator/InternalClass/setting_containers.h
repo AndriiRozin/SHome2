@@ -26,6 +26,8 @@ public:
     void save_all_actuators_to_file();
     void save_all_signals_to_file();
 
+    void write_to_xml(QString filename);
+
     int get_networkID_by_name(QString name, bool *ok);
     int get_placementID_by_name(QString name, bool *ok);
     int get_signalID_by_name(QString name, bool *ok);
