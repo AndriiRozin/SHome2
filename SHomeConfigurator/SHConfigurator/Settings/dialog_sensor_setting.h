@@ -21,7 +21,7 @@ public:
     explicit Dialog_Sensor_Setting(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Sensor_Setting();
 
-private slots:
+ private slots:
     void on_pushButton_add_clicked();
     void on_pushButton_delete_clicked();
     void on_pushButton_save_clicked();

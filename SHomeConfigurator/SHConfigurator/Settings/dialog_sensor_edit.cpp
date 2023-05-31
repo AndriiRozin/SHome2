@@ -19,10 +19,15 @@ Dialog_Sensor_Edit::~Dialog_Sensor_Edit()
     delete ui;
 }
 
-void Dialog_Sensor_Edit::set_sensor(Sensor_Setting new_sensor)
+void Dialog_Sensor_Edit::edit_sensor(Sensor_Setting new_sensor)
 {
     sensor = new_sensor;
     print_sensor();
+}
+
+Sensor_Setting  Dialog_Sensor_Edit::get_sensor()
+{
+    return sensor;
 }
 
 void Dialog_Sensor_Edit::init_dialog()
