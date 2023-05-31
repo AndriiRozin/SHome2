@@ -17,7 +17,8 @@ public:
     explicit Dialog_Sensor_Edit(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Sensor_Edit();
 
-    void set_sensor(Sensor_Setting sensor);
+    void edit_sensor(Sensor_Setting sensor);
+    Sensor_Setting get_sensor();
 
 private slots:
     void on_comboBox_placement2_currentIndexChanged(const QString &arg1);

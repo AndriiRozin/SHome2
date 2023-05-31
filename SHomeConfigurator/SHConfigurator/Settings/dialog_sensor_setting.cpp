@@ -61,25 +61,19 @@ void Dialog_Sensor_Setting::fill_table_sensor()
 
 void Dialog_Sensor_Setting::on_pushButton_add_clicked()
 {
-    QString new_name = QInputDialog::getText(this, tr("Input Sensor name"),
-                                             tr("Name"), QLineEdit::Normal);
+    Dialog_Sensor_Edit mDialog_Sensor_edit(this, p_containers);
+    mDialog_Sensor_edit.setModal(true);
+    mDialog_Sensor_edit.exec();
 
-    int last_key = 0;
-    Sensor_Setting last_sensor;
     Sensor_Setting new_sensor;
+    new_sensor = mDialog_Sensor_edit.get_sensor();
 
-    if(p_containers->sensors_map.isEmpty()) {
-        new_sensor = Sensor_Setting(new_name, last_sensor.get_id());
+    // added new sensor to containers
+    if(new_sensor.get_id() >= 0)
+    {
+        p_containers->sensors_map.insert(new_sensor.get_id(), new_sensor);
+        fill_table_sensor();
     }
-    else {
-        last_key = p_containers->sensors_map.lastKey();
-        last_sensor = p_containers->sensors_map[last_key];
-        new_sensor = Sensor_Setting(new_name, last_sensor.get_id() + 1);
-    }
-
-    p_containers->sensors_map.insert(new_sensor.get_id(), new_sensor);
-    add_row_sensor(new_sensor);
-    fill_table_sensor();
 }
 
 
@@ -129,7 +123,7 @@ void Dialog_Sensor_Setting::on_tableWidget_sensor_cellDoubleClicked(int row, int
 {
     Sensor_Setting currentSensor = p_containers->sensors_map[row];
     Dialog_Sensor_Edit mDialog_Sensor_edit(this, p_containers);
-    mDialog_Sensor_edit.set_sensor(currentSensor);
+    mDialog_Sensor_edit.edit_sensor(currentSensor);
     mDialog_Sensor_edit.setModal(true);
     mDialog_Sensor_edit.exec();
 
