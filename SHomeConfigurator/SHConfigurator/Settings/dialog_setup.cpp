@@ -49,10 +49,10 @@ void Dialog_Setup::check_write_file_name_net()
     QString fileName_net = fi_net.fileName();
 
     if(fi_net.exists()) {
-        ui->lineEdit_file_net->setStyleSheet("color: black;  background-color: white");
+//        ui->lineEdit_file_net->setStyleSheet("color: black;  background-color: white");
     }
     else {
-        ui->lineEdit_file_net->setStyleSheet("color: white;  background-color: red");
+//        ui->lineEdit_file_net->setStyleSheet("color: white;  background-color: red");
     }
     ui->lineEdit_file_net->setText(fileName_net);
 }
@@ -63,10 +63,10 @@ void Dialog_Setup::check_write_file_name_place()
     QString fileName_place = fi_place.fileName();
 
     if(fi_place.exists()) {
-        ui->lineEdit_file_place->setStyleSheet("color: black;  background-color: white");
+//        ui->lineEdit_file_place->setStyleSheet("color: black;  background-color: white");
     }
     else {
-        ui->lineEdit_file_place->setStyleSheet("color: white;  background-color: red");
+//        ui->lineEdit_file_place->setStyleSheet("color: white;  background-color: red");
     }
     ui->lineEdit_file_place->setText(fileName_place);
 }
@@ -78,10 +78,10 @@ void Dialog_Setup::check_write_file_name_signal()
     QString fileName_signal = fi_signal.fileName();
 
     if(fi_signal.exists()) {
-        ui->lineEdit_file_signal->setStyleSheet("color: black;  background-color: white");
+//        ui->lineEdit_file_signal->setStyleSheet("color: black;  background-color: white");
     }
     else {
-        ui->lineEdit_file_signal->setStyleSheet("color: white;  background-color: red");
+//        ui->lineEdit_file_signal->setStyleSheet("color: white;  background-color: red");
     }
     ui->lineEdit_file_signal->setText(fileName_signal);
 }
@@ -92,10 +92,10 @@ void Dialog_Setup::check_write_file_name_sensor()
     QString fileName_sensor = fi_sensor.fileName();
 
     if(fi_sensor.exists()) {
-        ui->lineEdit_file_sensor->setStyleSheet("color: black;  background-color: white");
+//        ui->lineEdit_file_sensor->setStyleSheet("color: black;  background-color: white");
     }
     else {
-        ui->lineEdit_file_sensor->setStyleSheet("color: white;  background-color: red");
+//        ui->lineEdit_file_sensor->setStyleSheet("color: white;  background-color: red");
     }
     ui->lineEdit_file_sensor->setText(fileName_sensor);
 }
@@ -106,10 +106,10 @@ void Dialog_Setup::check_write_file_name_actuator()
     QString fileName_actuator = fi_actuator.fileName();
 
     if(fi_actuator.exists()) {
-        ui->lineEdit_file_actuator->setStyleSheet("color: black;  background-color: white");
+//        ui->lineEdit_file_actuator->setStyleSheet("color: black;  background-color: white");
     }
     else {
-        ui->lineEdit_file_actuator->setStyleSheet("color: white;  background-color: red");
+//        ui->lineEdit_file_actuator->setStyleSheet("color: white;  background-color: red");
     }
     ui->lineEdit_file_actuator->setText(fileName_actuator);
 }

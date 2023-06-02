@@ -39,6 +39,7 @@ Setting_Containers::Setting_Containers():
     read_all_sensors_from_file(pathToIni_sensor);
 
     write_to_xml("test_xml.xml");
+    read_from_xml("test_xml.xml");
 }
 
 void Setting_Containers::write_to_xml(QString filename)
@@ -48,25 +49,19 @@ void Setting_Containers::write_to_xml(QString filename)
     document.appendChild(root);
 
     QDomElement networks = document.createElement("Networks");
-    networks.setAttribute("Total",networks_map.size());
     root.appendChild(networks);
 
     QDomElement placement = document.createElement("Placement");
-    placement.setAttribute("Total", placements_map.size());
     root.appendChild(placement);
 
     QDomElement mysignals = document.createElement("Signals");
-    mysignals.setAttribute("Total", signals_map.size());
     root.appendChild(mysignals);
 
-    QDomElement actuators = document.createElement("actuators");
-    actuators.setAttribute("Total", actuators_map.size());
+    QDomElement actuators = document.createElement("Actuators");
     root.appendChild(actuators);
 
     QDomElement sensors = document.createElement("Sensors");
-    sensors.setAttribute("Total", sensors_map.size());
     root.appendChild(sensors);
-
 
     foreach(int key, networks_map.keys())
     {
@@ -110,14 +105,15 @@ void Setting_Containers::write_to_xml(QString filename)
         mysignals.appendChild(sig);
     }
 
+
     foreach(int key, actuators_map.keys())
     {
         Actuator_Setting myActuator = actuators_map[key];
         QDomElement actuator = document.createElement("actuator");
 
         actuator.setAttribute("number", key);
-        actuator.setAttribute("Name", myActuator.get_name());
-        actuator.setAttribute("Id", myActuator.get_id());
+        actuator.setAttribute("name", myActuator.get_name());
+        actuator.setAttribute("id", myActuator.get_id());
         actuator.setAttribute("description",myActuator.get_description());
         actuator.setAttribute("plasement2",myActuator.get_placement2().get_id());
         actuator.setAttribute("plasement1",myActuator.get_placement1().get_id());
@@ -142,24 +138,61 @@ void Setting_Containers::write_to_xml(QString filename)
         sensors.appendChild(sensor);
     }
 
-
-
-
-
-    qDebug() << "write_to_xml:" << filename;
-
     QFile xmlFile(filename);
     if (!xmlFile.open(QFile::WriteOnly | QFile::Text ))
     {
         qDebug() << "Open the file for writing failed";
     }
-    else
-    {
+    else {
         QTextStream xmlContent(&xmlFile);
         xmlContent << document.toString();
         xmlFile.close();
     }
 }
+
+void Setting_Containers::read_from_xml(QString filename)
+{
+    QDomDocument documentXML;
+
+    // read xml file
+    QFile xmlFile(filename);
+    if (!xmlFile.open(QIODevice::ReadOnly | QFile::Text ))
+    {
+        qDebug() << "Failed to open the file for reading.";
+    }
+    documentXML.setContent(&xmlFile);
+    xmlFile.close();
+
+    // parsing documentXML
+    QDomElement root = documentXML.documentElement();
+    qDebug() << root.tagName();
+
+    QDomElement node = root.firstChild().toElement();
+
+    while(node.isNull() == false)
+    {
+        qDebug() <<  node.tagName();
+
+        QDomElement child = node.firstChild().toElement();
+        while(child.isNull() == false)
+        {
+            qDebug() <<  child.tagName() << child.attribute("number","number")<< child.attribute("id","id") << child.attribute("name","name");
+            child = child.nextSibling().toElement();
+
+        }
+
+
+
+        node = node.nextSibling().toElement();
+    }
+
+
+
+
+    qDebug() << "Reading finished" ;
+
+}
+
 
 void Setting_Containers::read_all_networks_from_file(QString filename)
 {

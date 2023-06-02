@@ -27,6 +27,7 @@ public:
     void save_all_signals_to_file();
 
     void write_to_xml(QString filename);
+    void read_from_xml(QString filename);
 
     int get_networkID_by_name(QString name, bool *ok);
     int get_placementID_by_name(QString name, bool *ok);
