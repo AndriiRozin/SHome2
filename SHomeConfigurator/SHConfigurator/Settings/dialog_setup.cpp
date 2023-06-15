@@ -19,23 +19,13 @@ Dialog_Setup::Dialog_Setup(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    dirToIni = read_Init_Folder();
-    ui->lineEdit_Path->setText(dirToIni);
-
-    file_net = read_Init_net();
-    check_write_file_name_net();
-
-    file_place = read_Init_place();
-    check_write_file_name_place();
-
-    file_signal = read_Init_signal();
-    check_write_file_name_signal();
-
-    file_sensor = read_Init_sensor();
-    check_write_file_name_sensor();
-
-    file_actuator = read_Init_actuator();
-    check_write_file_name_actuator();
+    file_config = read_config_path();
+    bool ok = false;
+    check_write_file_config_xml(&ok);
+    if(ok == false)
+    {
+        qDebug() << __FUNCTION__ << "File CONFIG is not present!" ;
+    }
 }
 
 Dialog_Setup::~Dialog_Setup()
@@ -43,260 +33,46 @@ Dialog_Setup::~Dialog_Setup()
     delete ui;
 }
 
-void Dialog_Setup::check_write_file_name_net()
+void Dialog_Setup::on_pushButton_file_change_clicked()
 {
-    QFileInfo fi_net(file_net);
-    QString fileName_net = fi_net.fileName();
-
-    if(fi_net.exists()) {
-        ui->lineEdit_file_net->setStyleSheet("color: black;  background-color: white");
-    }
-    else {
-        ui->lineEdit_file_net->setStyleSheet("color: white;  background-color: red");
-    }
-    ui->lineEdit_file_net->setText(fileName_net);
+    file_config = QFileDialog::getOpenFileName(this,
+                                                "Select CONFIG File",
+                                                dirToIni,
+                                                "Images (*.xml )");
+    ui->lineEdit_config_file->setText(file_config);
+    save_config_path(file_config);
 }
 
-void Dialog_Setup::check_write_file_name_place()
-{
-    QFileInfo fi_place(file_place);
-    QString fileName_place = fi_place.fileName();
-
-    if(fi_place.exists()) {
-        ui->lineEdit_file_place->setStyleSheet("color: black;  background-color: white");
-    }
-    else {
-        ui->lineEdit_file_place->setStyleSheet("color: white;  background-color: red");
-    }
-    ui->lineEdit_file_place->setText(fileName_place);
-}
-
-
-void Dialog_Setup::check_write_file_name_signal()
-{
-    QFileInfo fi_signal(file_signal);
-    QString fileName_signal = fi_signal.fileName();
-
-    if(fi_signal.exists()) {
-        ui->lineEdit_file_signal->setStyleSheet("color: black;  background-color: white");
-    }
-    else {
-        ui->lineEdit_file_signal->setStyleSheet("color: white;  background-color: red");
-    }
-    ui->lineEdit_file_signal->setText(fileName_signal);
-}
-
-void Dialog_Setup::check_write_file_name_sensor()
-{
-    QFileInfo fi_sensor(file_sensor);
-    QString fileName_sensor = fi_sensor.fileName();
-
-    if(fi_sensor.exists()) {
-        ui->lineEdit_file_sensor->setStyleSheet("color: black;  background-color: white");
-    }
-    else {
-        ui->lineEdit_file_sensor->setStyleSheet("color: white;  background-color: red");
-    }
-    ui->lineEdit_file_sensor->setText(fileName_sensor);
-}
-
-void Dialog_Setup::check_write_file_name_actuator()
-{
-    QFileInfo fi_actuator(file_actuator);
-    QString fileName_actuator = fi_actuator.fileName();
-
-    if(fi_actuator.exists()) {
-        ui->lineEdit_file_actuator->setStyleSheet("color: black;  background-color: white");
-    }
-    else {
-        ui->lineEdit_file_actuator->setStyleSheet("color: white;  background-color: red");
-    }
-    ui->lineEdit_file_actuator->setText(fileName_actuator);
-}
-
-void Dialog_Setup::save_Init_Path(QString absPath)
+void Dialog_Setup::save_config_path(QString file_name)
 {
     QSettings  settings("SHConfig.ini", QSettings::IniFormat);
     settings.beginGroup("INIT_Files");
-    settings.setValue("Folder", absPath);
+    settings.setValue("ConfigXML", file_name);
     settings.endGroup();
 }
 
-void Dialog_Setup::save_Init_net(QString file_name)
+QString Dialog_Setup::read_config_path()
 {
     QSettings  settings("SHConfig.ini", QSettings::IniFormat);
     settings.beginGroup("INIT_Files");
-    settings.setValue("Net", file_name);
-    settings.endGroup();
-}
-
-void Dialog_Setup::save_Init_place(QString file_name)
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    settings.setValue("Place", file_name);
-    settings.endGroup();
-}
-
-void Dialog_Setup::save_Init_signal(QString file_name)
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    settings.setValue("Signal", file_name);
-    settings.endGroup();
-}
-
-void Dialog_Setup::save_Init_sensor(QString file_name)
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    settings.setValue("Sensor", file_name);
-    settings.endGroup();
-}
-
-void Dialog_Setup::save_Init_actuator(QString file_name)
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    settings.setValue("Actuator", file_name);
-    settings.endGroup();
-}
-
-QString Dialog_Setup::read_Init_Folder()
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    QString dir = settings.value("Folder").toString();
-    settings.endGroup();
-    return dir;
-}
-
-QString Dialog_Setup::read_Init_net()
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    QString file_name = settings.value("Net").toString();
+    QString file_name = settings.value("ConfigXML").toString();
     settings.endGroup();
     return file_name;
 }
 
-QString Dialog_Setup::read_Init_place()
+bool Dialog_Setup::check_write_file_config_xml(bool* ok)
 {
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    QString file_name = settings.value("Place").toString();
-    settings.endGroup();
-    return file_name;
-}
 
-QString Dialog_Setup::read_Init_signal()
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    QString file_name = settings.value("Signal").toString();
-    settings.endGroup();
-    return file_name;
-}
+    QFileInfo fi_config(file_config);
+    *ok = fi_config.exists();
 
-QString Dialog_Setup::read_Init_sensor()
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    QString file_name = settings.value("Sensor").toString();
-    settings.endGroup();
-    return file_name;
-}
+    qDebug()<<__FUNCTION__<<"file_config"<<file_config << fi_config.exists();
 
-QString Dialog_Setup::read_Init_actuator()
-{
-    QSettings  settings("SHConfig.ini", QSettings::IniFormat);
-    settings.beginGroup("INIT_Files");
-    QString file_name = settings.value("Actuator").toString();
-    settings.endGroup();
-    return file_name;
-}
-
-void Dialog_Setup::on_pushButton_Net_Change_clicked()
-{
-    file_net = QFileDialog::getOpenFileName(this,
-                                            "Select INI File",
-                                            dirToIni,
-                                            "Images (*.ini )");
-    // get directory
-    QDir dir(file_net);
-    dir.cdUp();
-    QString path = dir.absolutePath();
-
-    save_Init_net(file_net);
-    save_Init_Path(path);
-
-    check_write_file_name_net();
-}
-
-void Dialog_Setup::on_pushButton_Placement_Change_clicked()
-{
-    file_place = QFileDialog::getOpenFileName(this,
-                                              "Select INI File",
-                                              dirToIni,
-                                              "Images (*.ini )");
-    // get directory
-    QDir dir(file_place);
-    dir.cdUp();
-    QString path = dir.absolutePath();
-
-    save_Init_place(file_place);
-    save_Init_Path(path);
-
-    check_write_file_name_place();
-}
-
-void Dialog_Setup::on_pushButton_Signal_Change_clicked()
-{
-    file_signal = QFileDialog::getOpenFileName(this,
-                                               "Select INI File",
-                                               dirToIni,
-                                               "Images (*.ini )");
-    // get directory
-    QDir dir(file_signal);
-    dir.cdUp();
-    QString path = dir.absolutePath();
-
-    save_Init_signal(file_signal);
-    save_Init_Path(path);
-
-    check_write_file_name_signal();
-}
-
-void Dialog_Setup::on_pushButton_Sensor_Change_clicked()
-{
-    file_sensor = QFileDialog::getOpenFileName(this,
-                                               "Select INI File",
-                                               dirToIni,
-                                               "Images (*.ini )");
-    // get directory
-    QDir dir(file_sensor);
-    dir.cdUp();
-    QString path = dir.absolutePath();
-
-    save_Init_sensor(file_sensor);
-    save_Init_Path(path);
-
-    check_write_file_name_sensor();
-}
-
-void Dialog_Setup::on_pushButton_ACtuator_Change_clicked()
-{
-    file_actuator = QFileDialog::getOpenFileName(this,
-                                                 "Select INI File",
-                                                 dirToIni,
-                                                 "Images (*.ini )");
-    // get directory
-    QDir dir(file_actuator);
-    dir.cdUp();
-    QString path = dir.absolutePath();
-
-    save_Init_actuator(file_actuator);
-    save_Init_Path(path);
-
-    check_write_file_name_actuator();
+    if(fi_config.exists()) {
+        ui->lineEdit_config_file->setText(file_config);
+    }
+    else {
+        ui->lineEdit_config_file->setText("");
+    }
+    return *ok;
 }

@@ -105,7 +105,7 @@ void Dialog_net_setting::delete_net_from_list(int id)
 
 void Dialog_net_setting::on_pushButton_save_clicked()
 {
-    p_containers->save_all_networks_to_file();
+    p_containers->write_to_xml();
     close();
 }
 

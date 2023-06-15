@@ -107,7 +107,7 @@ void Dialog_Placement_Setting::delete_placement_from_list(int id)
 
 void Dialog_Placement_Setting::on_pushButton_save_clicked()
 {
-    p_containers->save_all_placements_to_file();
+    p_containers->write_to_xml();
     close();
 }
 

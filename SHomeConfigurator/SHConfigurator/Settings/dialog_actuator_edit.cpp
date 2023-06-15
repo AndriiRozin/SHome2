@@ -66,3 +66,22 @@ void Dialog_Actuator_Edit::on_comboBox_signalValue_currentIndexChanged(const QSt
 }
 
 
+void Dialog_Actuator_Edit::on_buttonBox_Actuator_accepted()
+{
+    actuator.set_name(ui->lineEdit_name->text());
+    actuator.set_id(ui->spinBox_id->value());
+    actuator.set_description(ui->lineEdit_description->text());
+}
+
+
+void Dialog_Actuator_Edit::on_buttonBox_Actuator_rejected()
+{
+    actuator.set_name("");
+    actuator.set_id(-1);
+    actuator.set_description("");
+}
+
+Actuator_Setting Dialog_Actuator_Edit::get_actuator()
+{
+    return actuator;
+}

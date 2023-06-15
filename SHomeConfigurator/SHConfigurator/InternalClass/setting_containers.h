@@ -9,24 +9,16 @@
 #include "InternalClass/signal_setting.h"
 #include "InternalClass/actuator_setting.h"
 
+#include <QtXml>
+#include <QTextStream>
+
 class Setting_Containers
 {
 public:
     Setting_Containers();
 
-    void read_all_networks_from_file(QString filename);
-    void read_all_placements_from_file(QString filename);
-    void read_all_signals_from_file(QString filename);
-    void read_all_actuators_from_file(QString filename);
-    void read_all_sensors_from_file(QString filename);
-
-    void save_all_networks_to_file();
-    void save_all_placements_to_file();
-    void save_all_sensors_to_file();
-    void save_all_actuators_to_file();
-    void save_all_signals_to_file();
-
-    void write_to_xml(QString filename);
+    void write_to_xml();
+    void read_from_xml();
 
     int get_networkID_by_name(QString name, bool *ok);
     int get_placementID_by_name(QString name, bool *ok);
@@ -36,6 +28,21 @@ public:
     QStringList get_placement_names_list();
     QStringList get_signalValues_names_list();
 
+private:
+    QString read_xml_filename();
+    void parsing_xml(QDomDocument document_xml);
+    void parsing_xml_net(QDomElement child);
+    void parsing_xml_place(QDomElement child);
+    void parsing_xml_signal(QDomElement child);
+    void parsing_xml_actuator(QDomElement child);
+    void parsing_xml_sensor(QDomElement child);
+
+    void create_xml_nets(QDomDocument document_xml, QDomElement);
+    void create_xml_places(QDomDocument document_xml, QDomElement);
+    void create_xml_signals(QDomDocument document_xml, QDomElement);
+    void create_xml_actuators(QDomDocument document_xml, QDomElement);
+    void create_xml_sensors(QDomDocument document_xml, QDomElement);
+
 public:
     QMap<int, Net_Setting> networks_map;
     QMap<int, Placement_Setting> placements_map;
@@ -44,12 +51,7 @@ public:
     QMap<int, Sensor_Setting> sensors_map;
 
 private:
-    QString pathToini;
-    QString pathToIni_net;
-    QString pathToIni_place;
-    QString pathToIni_signal;
-    QString pathToIni_sensor;
-    QString pathToIni_actuator;
+    QString xml_filename;
 };
 
 #endif // SETTING_CONTAINERS_H

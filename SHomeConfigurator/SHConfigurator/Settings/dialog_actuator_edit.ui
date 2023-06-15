@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>353</height>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -257,7 +257,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="buttonBox_Actuator">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -271,7 +271,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>buttonBox_Actuator</sender>
    <signal>accepted()</signal>
    <receiver>Dialog_Actuator_Edit</receiver>
    <slot>accept()</slot>
@@ -287,7 +287,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>buttonBox_Actuator</sender>
    <signal>rejected()</signal>
    <receiver>Dialog_Actuator_Edit</receiver>
    <slot>reject()</slot>

@@ -26,6 +26,8 @@ private slots:
 
     void on_tableWidget_actuators_cellDoubleClicked(int row, int column);
 
+    void on_pushButton_save_clicked();
+
 private:
     void create_table_actuator();
     void fill_table_actuator();
