@@ -101,7 +101,7 @@ void Dialog_Signal_Setting::on_tableWidget_signal_cellDoubleClicked(int row, int
 
 void Dialog_Signal_Setting::on_pushButton_save_clicked()
 {
-    p_containers->save_all_signals_to_file();
+    p_containers->write_to_xml();
     close();
 }
 

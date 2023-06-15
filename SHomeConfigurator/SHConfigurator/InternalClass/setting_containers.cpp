@@ -2,143 +2,47 @@
 
 #include <QSettings>
 #include <QDebug>
-#include <QMap>
-
-#include <QtXml>
-#include <QTextStream>
-
 
 Setting_Containers::Setting_Containers():
     networks_map(),
     placements_map(),
     signals_map(),
     actuators_map(),
-    sensors_map(),
-    pathToini(),
-    pathToIni_net(),
-    pathToIni_place(),
-    pathToIni_signal(),
-    pathToIni_sensor(),
-    pathToIni_actuator()
+    sensors_map()
+{
 
+    xml_filename = read_xml_filename();
+    read_from_xml();
+}
+
+QString Setting_Containers::read_xml_filename()
 {
     QSettings  settings("SHConfig.ini", QSettings::IniFormat);
     settings.beginGroup("INIT_Files");
-    pathToini = settings.value("Folder").toString();
-    pathToIni_net = settings.value("Net").toString();
-    pathToIni_place = settings.value("Place").toString();
-    pathToIni_signal = settings.value("Signal").toString();
-    pathToIni_sensor = settings.value("Sensor").toString();
-    pathToIni_actuator = settings.value("Actuator").toString();
+    xml_filename = settings.value("ConfigXML").toString();
     settings.endGroup();
-
-    read_all_networks_from_file(pathToIni_net);
-    read_all_placements_from_file(pathToIni_place);
-    read_all_signals_from_file(pathToIni_signal);
-    read_all_actuators_from_file(pathToIni_actuator);
-    read_all_sensors_from_file(pathToIni_sensor);
-
-    write_to_xml("test_xml.xml");
-    read_from_xml("test_xml.xml");
+    return xml_filename;
 }
 
-void Setting_Containers::write_to_xml(QString filename)
+void Setting_Containers::write_to_xml()
 {
     QDomDocument document;
-    QDomElement root = document.createElement("Environment");
+
+    QDomProcessingInstruction instr = document.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
+    document.appendChild(instr);
+
+    QDomElement root = document.createElement("ENVIRONMENT");
     document.appendChild(root);
 
-    QDomElement networks = document.createElement("Networks");
-    root.appendChild(networks);
+    create_xml_nets(document, root);
+    create_xml_places(document, root);
+    create_xml_signals(document, root);
+    create_xml_actuators(document, root);
+    create_xml_sensors(document, root);
 
-    QDomElement placement = document.createElement("Placement");
-    root.appendChild(placement);
+    //QString xml_filename1 = "C:/smart_home_setting/SHConfig1.xml";  //!!!!!!!!!!!!!!!!!!!!!!!!
+    QFile xmlFile(xml_filename);
 
-    QDomElement mysignals = document.createElement("Signals");
-    root.appendChild(mysignals);
-
-    QDomElement actuators = document.createElement("Actuators");
-    root.appendChild(actuators);
-
-    QDomElement sensors = document.createElement("Sensors");
-    root.appendChild(sensors);
-
-    foreach(int key, networks_map.keys())
-    {
-        Net_Setting myNet = networks_map[key];
-
-        QDomElement net = document.createElement("net");
-        net.setAttribute("number", key);
-        net.setAttribute("id", myNet.get_id());
-        net.setAttribute("name", myNet.get_name());
-        net.setAttribute("description", myNet.get_description());
-        networks.appendChild(net);
-    }
-
-    foreach(int key, placements_map.keys())
-    {
-        Placement_Setting myPlacement = placements_map[key];
-
-        QDomElement place = document.createElement("place");
-        place.setAttribute("number", key);
-        place.setAttribute("id", myPlacement.get_id());
-        place.setAttribute("name", myPlacement.get_name());
-        place.setAttribute("description", myPlacement.get_description());
-        placement.appendChild(place);
-    }
-
-    foreach(int key, signals_map.keys())
-    {
-        Signal_Setting mySig = signals_map[key];
-
-        QDomElement sig = document.createElement("signal");
-        sig.setAttribute("number", key);
-        sig.setAttribute("name", mySig.get_name());
-        sig.setAttribute("id", mySig.get_id());
-        sig.setAttribute("description",mySig.get_description());
-        sig.setAttribute("offset",mySig.get_offset());
-        sig.setAttribute("scale",mySig.get_factor());
-        sig.setAttribute("initSourceValue",mySig.get_initRawValue());
-        sig.setAttribute("err_sourceValue",mySig.get_errRawValue());
-        sig.setAttribute("maxValue",mySig.get_maxValue());
-        sig.setAttribute("minValue",mySig.get_minValue());
-        mysignals.appendChild(sig);
-    }
-
-
-    foreach(int key, actuators_map.keys())
-    {
-        Actuator_Setting myActuator = actuators_map[key];
-        QDomElement actuator = document.createElement("actuator");
-
-        actuator.setAttribute("number", key);
-        actuator.setAttribute("name", myActuator.get_name());
-        actuator.setAttribute("id", myActuator.get_id());
-        actuator.setAttribute("description",myActuator.get_description());
-        actuator.setAttribute("plasement2",myActuator.get_placement2().get_id());
-        actuator.setAttribute("plasement1",myActuator.get_placement1().get_id());
-        actuator.setAttribute("plasement0",myActuator.get_placement0().get_id());
-        actuator.setAttribute("signal", myActuator.get_signal().get_id());
-        actuators.appendChild(actuator);
-    }
-
-    foreach(int key, sensors_map.keys())
-    {
-        Sensor_Setting mySensor = sensors_map[key];
-        QDomElement sensor = document.createElement("sensor");
-
-        sensor.setAttribute("number", key);
-        sensor.setAttribute("name", mySensor.get_name());
-        sensor.setAttribute("id", mySensor.get_id());
-        sensor.setAttribute("description",mySensor.get_description());
-        sensor.setAttribute("plasement2",mySensor.get_placement2().get_id());
-        sensor.setAttribute("plasement1",mySensor.get_placement1().get_id());
-        sensor.setAttribute("plasement0",mySensor.get_placement0().get_id());
-        sensor.setAttribute("signal", mySensor.get_signal().get_id());
-        sensors.appendChild(sensor);
-    }
-
-    QFile xmlFile(filename);
     if (!xmlFile.open(QFile::WriteOnly | QFile::Text ))
     {
         qDebug() << "Open the file for writing failed";
@@ -150,12 +54,239 @@ void Setting_Containers::write_to_xml(QString filename)
     }
 }
 
-void Setting_Containers::read_from_xml(QString filename)
+void Setting_Containers::create_xml_nets(QDomDocument document_xml, QDomElement root)
 {
+    QDomElement networks_tag = document_xml.createElement("NETWORKS");
+    root.appendChild(networks_tag);
+
+    foreach(int key, networks_map.keys())
+    {
+        Net_Setting myNet = networks_map[key];
+
+        QDomElement net_tag = document_xml.createElement("NET");
+        networks_tag.appendChild(net_tag);
+
+        QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+        net_tag.appendChild(short_name_tag);
+        QDomText textName = document_xml.createTextNode(myNet.get_name());
+        short_name_tag.appendChild(textName);
+
+        QDomElement id_tag = document_xml.createElement("ID");
+        net_tag.appendChild(id_tag);
+        QDomText id_text = document_xml.createTextNode(QString::number(myNet.get_id()));
+        id_tag.appendChild(id_text);
+
+        QDomElement description_tag = document_xml.createElement("DESCRIPTION");
+        net_tag.appendChild(description_tag);
+        QDomText description_text = document_xml.createTextNode(myNet.get_description());
+        description_tag.appendChild(description_text);
+    }
+}
+
+void Setting_Containers::create_xml_places(QDomDocument document_xml, QDomElement root)
+{
+    QDomElement placements_tag = document_xml.createElement("PLACEMENTS");
+    root.appendChild(placements_tag);
+
+    foreach(int key, placements_map.keys())
+    {
+        Placement_Setting myPlacement = placements_map[key];
+
+        QDomElement place_tag = document_xml.createElement("PLACE");
+        placements_tag.appendChild(place_tag);
+
+        QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+        place_tag.appendChild(short_name_tag);
+        QDomText name_text = document_xml.createTextNode(myPlacement.get_name());
+        short_name_tag.appendChild(name_text);
+
+        QDomElement id_tag = document_xml.createElement("ID");
+        place_tag.appendChild(id_tag);
+        QDomText id_text = document_xml.createTextNode(QString::number(myPlacement.get_id()));
+        id_tag.appendChild(id_text);
+
+        QDomElement description_tag = document_xml.createElement("DESCRIPTION");
+        place_tag.appendChild(description_tag);
+        QDomText description_text = document_xml.createTextNode(myPlacement.get_description());
+        description_tag.appendChild(description_text);
+    }
+}
+
+void Setting_Containers::create_xml_signals(QDomDocument document_xml, QDomElement root)
+{
+    QDomElement signals_tag = document_xml.createElement("SIGNALS");
+    root.appendChild(signals_tag);
+
+    foreach(int key, signals_map.keys())
+    {
+        Signal_Setting mySig = signals_map[key];
+
+        QDomElement signal_tag = document_xml.createElement("SIGNAL");
+        signals_tag.appendChild(signal_tag);
+
+        QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+        signal_tag.appendChild(short_name_tag);
+        QDomText name_text = document_xml.createTextNode(mySig.get_name());
+        short_name_tag.appendChild(name_text);
+
+        QDomElement id_tag = document_xml.createElement("ID");
+        signal_tag.appendChild(id_tag);
+        QDomText id_text = document_xml.createTextNode(QString::number(mySig.get_id()));
+        id_tag.appendChild(id_text);
+
+        QDomElement description_tag = document_xml.createElement("DESCRIPTION");
+        signal_tag.appendChild(description_tag);
+        QDomText description_text = document_xml.createTextNode(mySig.get_description());
+        description_tag.appendChild(description_text);
+
+        QDomElement offset_tag = document_xml.createElement("OFFSET");
+        signal_tag.appendChild(offset_tag);
+        QDomText offset_text = document_xml.createTextNode(QString::number(mySig.get_offset()));
+        offset_tag.appendChild(offset_text);
+
+        QDomElement factor_tag = document_xml.createElement("FACTOR");
+        signal_tag.appendChild(factor_tag);
+        QDomText factor_text = document_xml.createTextNode(QString::number(mySig.get_factor()));
+        factor_tag.appendChild(factor_text);
+
+        QDomElement init_tag = document_xml.createElement("INIT-VALUE");
+        signal_tag.appendChild(init_tag);
+        QDomText init_text = document_xml.createTextNode(QString::number(mySig.get_initRawValue()));
+        init_tag.appendChild(init_text);
+
+        QDomElement max_tag = document_xml.createElement("MAX-VALUE");
+        signal_tag.appendChild(max_tag);
+        QDomText max_text = document_xml.createTextNode(QString::number(mySig.get_maxValue()));
+        max_tag.appendChild(max_text);
+
+        QDomElement min_tag = document_xml.createElement("MIN-VALUE");
+        signal_tag.appendChild(min_tag);
+        QDomText min_text = document_xml.createTextNode(QString::number(mySig.get_minValue()));
+        min_tag.appendChild(min_text);
+
+        QDomElement error_tag = document_xml.createElement("ERROR-VALUE");
+        signal_tag.appendChild(error_tag);
+        QDomText error_text = document_xml.createTextNode(QString::number(mySig.get_errRawValue()));
+        error_tag.appendChild(error_text);
+    }
+}
+
+void Setting_Containers::create_xml_actuators(QDomDocument document_xml, QDomElement root)
+{
+    QDomElement actuators_tag = document_xml.createElement("ACTUATORS");
+    root.appendChild(actuators_tag);
+
+    foreach(int key, actuators_map.keys())
+    {
+        Actuator_Setting myActuator = actuators_map[key];
+
+        QDomElement actuator_tag = document_xml.createElement("ACTUATOR");
+        actuators_tag.appendChild(actuator_tag);
+
+        QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+        actuator_tag.appendChild(short_name_tag);
+        QDomText name_text = document_xml.createTextNode(myActuator.get_name());
+        short_name_tag.appendChild(name_text);
+
+        QDomElement id_tag = document_xml.createElement("ID");
+        actuator_tag.appendChild(id_tag);
+        QDomText id_text = document_xml.createTextNode(QString::number(myActuator.get_id()));
+        id_tag.appendChild(id_text);
+
+        QDomElement description_tag = document_xml.createElement("DESCRIPTION");
+        actuator_tag.appendChild(description_tag);
+        QDomText description_text = document_xml.createTextNode(myActuator.get_description());
+        description_tag.appendChild(description_text);
+
+        QDomElement placement2_tag = document_xml.createElement("PLACEMENT-2");
+        actuator_tag.appendChild(placement2_tag);
+        QDomText placement2_text = document_xml.createTextNode(QString::number(myActuator.get_placement2().get_id()));
+        placement2_tag.appendChild(placement2_text);
+
+        QDomElement placement1_tag = document_xml.createElement("PLACEMENT-1");
+        actuator_tag.appendChild(placement1_tag);
+        QDomText placement1_text = document_xml.createTextNode(QString::number(myActuator.get_placement1().get_id()));
+        placement1_tag.appendChild(placement1_text);
+
+        QDomElement placement0_tag = document_xml.createElement("PLACEMENT-0");
+        actuator_tag.appendChild(placement0_tag);
+        QDomText placement0_text = document_xml.createTextNode(QString::number(myActuator.get_placement0().get_id()));
+        placement0_tag.appendChild(placement0_text);
+
+        QDomElement signal_id_tag = document_xml.createElement("REF-SIGNAL-ID");
+        actuator_tag.appendChild(signal_id_tag);
+        QDomText signal_id_text = document_xml.createTextNode(QString::number( myActuator.get_signal().get_id()));
+        signal_id_tag.appendChild(signal_id_text);
+
+        QDomElement net_id_tag = document_xml.createElement("REF-NET-ID");
+        actuator_tag.appendChild(net_id_tag);
+        QDomText net_id_text = document_xml.createTextNode(QString::number( myActuator.get_signal().get_id()));
+        net_id_tag.appendChild(net_id_text);
+    }
+}
+
+void Setting_Containers::create_xml_sensors(QDomDocument document_xml, QDomElement root)
+{
+    QDomElement sensors_tag = document_xml.createElement("SENSORS");
+    root.appendChild(sensors_tag);
+
+    foreach(int key, sensors_map.keys())
+    {
+        Sensor_Setting mySensor = sensors_map[key];
+
+        QDomElement sensor_tag = document_xml.createElement("SENSOR");
+        sensors_tag.appendChild(sensor_tag);
+
+        QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+        sensor_tag.appendChild(short_name_tag);
+        QDomText name_text = document_xml.createTextNode( mySensor.get_name());
+        short_name_tag.appendChild(name_text);
+
+        QDomElement id_tag = document_xml.createElement("ID");
+        sensor_tag.appendChild(id_tag);
+        QDomText id_text = document_xml.createTextNode(QString::number(mySensor.get_id()));
+        id_tag.appendChild(id_text);
+
+        QDomElement description_tag = document_xml.createElement("DESCRIPTION");
+        sensor_tag.appendChild(description_tag);
+        QDomText description_text = document_xml.createTextNode(mySensor.get_description());
+        description_tag.appendChild(description_text);
+
+        QDomElement placement2_tag = document_xml.createElement("PLACEMENT-2");
+        sensor_tag.appendChild(placement2_tag);
+        QDomText placement2_text = document_xml.createTextNode(QString::number(mySensor.get_placement2().get_id()));
+        placement2_tag.appendChild(placement2_text);
+
+        QDomElement placement1_tag = document_xml.createElement("PLACEMENT-1");
+        sensor_tag.appendChild(placement1_tag);
+        QDomText placement1_text = document_xml.createTextNode(QString::number(mySensor.get_placement1().get_id()));
+        placement1_tag.appendChild(placement1_text);
+
+        QDomElement placement0_tag = document_xml.createElement("PLACEMENT-0");
+        sensor_tag.appendChild(placement0_tag);
+        QDomText placement0_text = document_xml.createTextNode(QString::number(mySensor.get_placement0().get_id()));
+        placement0_tag.appendChild(placement0_text);
+
+        QDomElement signal_id_tag = document_xml.createElement("REF-SIGNAL-ID");
+        sensor_tag.appendChild(signal_id_tag);
+        QDomText signal_id_text = document_xml.createTextNode(QString::number( mySensor.get_signal().get_id()));
+        signal_id_tag.appendChild(signal_id_text);
+
+        QDomElement net_id_tag = document_xml.createElement("REF-NET-ID");
+        sensor_tag.appendChild(net_id_tag);
+        QDomText net_id_text = document_xml.createTextNode(QString::number( mySensor.get_signal().get_id()));
+        net_id_tag.appendChild(net_id_text);
+    }
+}
+
+void Setting_Containers::read_from_xml()
+{
+    //QString xml_filename1 = "C:/smart_home_setting/SHConfig1.xml";  //!!!!!!!!!!!!!!!!!!!!!!!!
+
     QDomDocument documentXML;
 
     // read xml file
-    QFile xmlFile(filename);
+    QFile xmlFile(xml_filename);
     if (!xmlFile.open(QIODevice::ReadOnly | QFile::Text ))
     {
         qDebug() << "Failed to open the file for reading.";
@@ -163,295 +294,298 @@ void Setting_Containers::read_from_xml(QString filename)
     documentXML.setContent(&xmlFile);
     xmlFile.close();
 
-    // parsing documentXML
-    QDomElement root = documentXML.documentElement();
-    qDebug() << root.tagName();
-
-    QDomElement node = root.firstChild().toElement();
-
-    while(node.isNull() == false)
-    {
-        qDebug() <<  node.tagName();
-
-        QDomElement child = node.firstChild().toElement();
-        while(child.isNull() == false)
-        {
-            qDebug() <<  child.tagName() << child.attribute("number","number")<< child.attribute("id","id") << child.attribute("name","name");
-            child = child.nextSibling().toElement();
-
-        }
-
-
-
-        node = node.nextSibling().toElement();
-    }
-
-
-
-
+    parsing_xml(documentXML);
     qDebug() << "Reading finished" ;
-
 }
 
-
-void Setting_Containers::read_all_networks_from_file(QString filename)
+void Setting_Containers::parsing_xml(QDomDocument document_xml)
 {
-    QSettings  settings(filename, QSettings::IniFormat);
-    QStringList nets_lst = settings.childGroups();
+    QDomElement root = document_xml.documentElement();
+    QDomElement elements = root.firstChild().toElement();
+    QDomElement element;
+    QDomElement property;
 
-    foreach(QString net, nets_lst){
-        // read data for current placement
-        int net_number = net.remove("Net_").toInt();
-
-        settings.beginGroup("Net_" + QString::number(net_number));
-
-        Net_Setting new_net(settings.value("Name").toString(),
-                            settings.value("Id").toInt(),
-                            settings.value("Description").toString());
-
-        networks_map.insert(settings.value("Id").toInt(), new_net);
-        settings.endGroup();
-    }
-}
-
-void Setting_Containers::read_all_placements_from_file(QString filename)
-{
-    QSettings  settings(filename, QSettings::IniFormat);
-    QStringList placement_lst = settings.childGroups();
-
-    foreach(QString placement, placement_lst){
-        // read data for current placement
-        int placement_number = placement.remove("Placement_").toInt();
-
-        settings.beginGroup("Placement_" + QString::number(placement_number));
-
-        Placement_Setting new_placement(settings.value("Name").toString(),
-                                        settings.value("Id").toInt(),
-                                        settings.value("Description").toString());
-
-        placements_map.insert(settings.value("Id").toInt(), new_placement);
-        settings.endGroup();
-    }
-}
-
-void Setting_Containers::read_all_signals_from_file(QString filename)
-{
-    QSettings  settings(filename, QSettings::IniFormat);
-    QStringList signal_lst = settings.childGroups();
-
-    Signal_Setting new_signal;
-
-    // read values from file and put them to container
-    foreach(QString signal, signal_lst) {
-
-        settings.beginGroup(signal);
-        new_signal.set_name(settings.value("Name").toString());
-        new_signal.set_id(settings.value("Id").toInt());
-        new_signal.set_description(settings.value("Description").toString());
-        new_signal.set_offset(settings.value("Offset").toDouble());
-        new_signal.set_factor(settings.value("Scale").toDouble());
-        new_signal.set_initRawValue(settings.value("InitSourceValue").toInt());
-        new_signal.set_errRawValue(settings.value("Err_sourceValue").toInt());
-        new_signal.set_maxValue(settings.value("MaxValue").toDouble());
-        new_signal.set_minValue(settings.value("MinValue").toDouble());
-        new_signal.set_signalStatus(enum_signal_status::INIT);
-        settings.endGroup();
-
-        signals_map.insert(new_signal.get_id(), new_signal);
-    }
-}
-
-void Setting_Containers::read_all_actuators_from_file(QString filename)
-{
-    QSettings  settings(filename, QSettings::IniFormat);
-    QStringList actuators_lst = settings.childGroups();
-
-    // create AbstractSensor for each
-    foreach(QString actuator, actuators_lst){
-        // read data for current sensor
-        int actuator_number = actuator.remove("Actuator_").toInt();
-
-        settings.beginGroup("Actuator_" + QString::number(actuator_number));
-
-        Actuator_Setting  new_actuator;
-        new_actuator.set_name(settings.value("Name").toString());
-        new_actuator.set_id(settings.value("Id").toInt());
-        new_actuator.set_description(settings.value("Description").toString());
-
-        int pl2_id = settings.value("Plasement2").toInt();
-        new_actuator.set_plasement2(placements_map[pl2_id]);
-
-        int pl1_id = settings.value("Plasement1").toInt();
-        new_actuator.set_plasement1(placements_map[pl1_id]);
-
-        int pl0_id = settings.value("Plasement0").toInt();
-        new_actuator.set_plasement0(placements_map[pl0_id]);
-
-        int net_id = settings.value("Network").toInt();
-        new_actuator.set_network(networks_map[net_id]);
-
-        int sig_id = settings.value("Signal").toInt();
-        new_actuator.set_signal(signals_map[sig_id]);
-
-        actuators_map.insert(settings.value("Id").toInt(), new_actuator);
-        settings.endGroup();
-    }
-}
-
-void Setting_Containers::read_all_sensors_from_file(QString filename)
-{
-    QSettings  settings(filename, QSettings::IniFormat);
-    QStringList sensors_lst = settings.childGroups();
-
-    // create AbstractSensor for each sensor
-    foreach(QString sensor, sensors_lst){
-        // read data for current sensor
-        int sensor_number = sensor.remove("Sensor_").toInt();
-
-        settings.beginGroup("Sensor_" + QString::number(sensor_number));
-
-        Sensor_Setting new_sensor;
-        new_sensor.set_name(settings.value("Name").toString());
-        new_sensor.set_id(settings.value("Id").toInt());
-        new_sensor.set_description(settings.value("Description").toString());
-
-        int net_id = settings.value("Network").toInt();
-        Net_Setting net = networks_map[net_id];
-        new_sensor.set_network(net);
-
-        int pl2_id = settings.value("Plasement2").toInt();
-        Placement_Setting plasement2 = placements_map[pl2_id];
-        new_sensor.set_plasement2(plasement2);
-
-        int pl1_id = settings.value("Plasement1").toInt();
-        Placement_Setting plasement1 = placements_map[pl1_id];
-        new_sensor.set_plasement1(plasement1);
-
-        int pl0_id = settings.value("Plasement0").toInt();
-        Placement_Setting plasement0 = placements_map[pl0_id];
-        new_sensor.set_plasement0(plasement0);
-
-        int sig_id = settings.value("Signal").toInt();
-        Signal_Setting signal = signals_map[sig_id];
-        new_sensor.set_signal(signal);
-
-        sensors_map.insert(settings.value("Id").toInt(), new_sensor);
-        settings.endGroup();
-    }   
-}
-
-void Setting_Containers::save_all_networks_to_file()
-{
-    QSettings  settings(pathToIni_net, QSettings::IniFormat);
-
-    settings.clear();
-
-    QList<int> keys = networks_map.keys();
-    foreach(int key, keys)
+    while(elements.isNull() == false)
     {
-        Net_Setting myNet = networks_map[key];
-        settings.beginGroup("Net_" + QString::number(myNet.get_id()));
-
-        settings.setValue("Name", myNet.get_name());
-        settings.setValue("Id", myNet.get_id());
-        settings.setValue("Description" , myNet.get_description());
-
-        settings.endGroup();
+        element = elements.firstChild().toElement();
+        while(!element.isNull())
+        {
+            if(element.tagName() == "NET")
+            {
+                property = element.firstChild().toElement();
+                parsing_xml_net(property);
+                element = element.nextSibling().toElement();
+            }
+            else if(element.tagName() == "PLACE")
+            {
+                property = element.firstChild().toElement();
+                parsing_xml_place(property);
+                element = element.nextSibling().toElement();
+            }
+            else if(element.tagName() == "SIGNAL")
+            {
+                property = element.firstChild().toElement();
+                parsing_xml_signal(property);
+                element = element.nextSibling().toElement();
+            }
+            else if(element.tagName() == "ACTUATOR")
+            {
+                property = element.firstChild().toElement();
+                parsing_xml_actuator(property);
+                element = element.nextSibling().toElement();
+            }
+            else if(element.tagName() == "SENSOR")
+            {
+                property = element.firstChild().toElement();
+                parsing_xml_sensor(property);
+                element = element.nextSibling().toElement();
+            }
+            else
+            {
+                element = element.nextSibling().toElement();
+            }
+        }
+        elements = elements.nextSibling().toElement();
     }
 }
 
-void Setting_Containers::save_all_placements_to_file()
+void Setting_Containers::parsing_xml_net(QDomElement property)
 {
-    QSettings  settings(pathToIni_place, QSettings::IniFormat);
-    settings.clear();
+    QString name;
+    int id;
+    QString description;
 
-    // create Placement for each Placements
-    QList<int> keys = placements_map.keys();
-    foreach(int key, keys)
+    while(!property.isNull())
     {
-        Placement_Setting myPlacement = placements_map[key];
-
-        settings.beginGroup("Placement_" + QString::number(myPlacement.get_id()));
-        settings.setValue("Name", myPlacement.get_name());
-        settings.setValue("Id", myPlacement.get_id());
-        settings.setValue("Description",myPlacement.get_description());
-
-        settings.endGroup();
+        if(property.tagName() == "SHORT-NAME")
+        {
+            name = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "ID")
+        {
+            id = (property.firstChild().toText().data()).toInt();
+        }
+        if(property.tagName() == "DESCRIPTION")
+        {
+            description = property.firstChild().toText().data();
+        }
+        property = property.nextSibling().toElement();
     }
+    Net_Setting new_element(name,id,description);
+    networks_map.insert(id, new_element);
 }
 
-void Setting_Containers::save_all_sensors_to_file()
+void Setting_Containers::parsing_xml_place(QDomElement property)
 {
-    QSettings  settings(pathToIni_sensor, QSettings::IniFormat);
-    settings.clear();
+    QString name;
+    int id;
+    QString description;
 
-    // create AbstractSensor for each sensor
-    QList<int> keys = sensors_map.keys();
-    foreach(int key, keys)
+    while(!property.isNull())
     {
-        Sensor_Setting mySensor = sensors_map[key];
-
-        settings.beginGroup("Sensor_" + QString::number(mySensor.get_id()));
-        settings.setValue("Name", mySensor.get_name());
-        settings.setValue("Id", mySensor.get_id());
-        settings.setValue("Description",mySensor.get_description());
-        settings.setValue("Plasement2",mySensor.get_placement2().get_id());
-        settings.setValue("Plasement1",mySensor.get_placement1().get_id());
-        settings.setValue("Plasement0",mySensor.get_placement0().get_id());
-        settings.setValue("Signal", mySensor.get_signal().get_id());
-
-        settings.endGroup();
+        if(property.tagName() == "SHORT-NAME")
+        {
+            name = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "ID")
+        {
+            id = (property.firstChild().toText().data()).toInt();
+        }
+        if(property.tagName() == "DESCRIPTION")
+        {
+            description = property.firstChild().toText().data();
+        }
+        property = property.nextSibling().toElement();
     }
+    Placement_Setting new_element(name,id,description);
+    placements_map.insert(id, new_element);
 }
 
-void Setting_Containers::save_all_actuators_to_file()
+void Setting_Containers::parsing_xml_signal(QDomElement property)
 {
-    QSettings  settings(pathToIni_actuator, QSettings::IniFormat);
-    settings.clear();
+    QString  name = "";
+    int      id = 0;
+    QString  description = "";
+    double   offset = 0.0;
+    double   factor = 0.0;
+    int      init = 0;
+    int      error = 0;
+    double   max = 0.0;
+    double   min = 0.0;
 
-    // create AbstractSensor for each sensor
-    QList<int> keys = actuators_map.keys();
-    foreach(int key, keys)
+    while(!property.isNull())
     {
-        Actuator_Setting myActuator = actuators_map[key];
-
-        settings.beginGroup("Actuator_" + QString::number(myActuator.get_id()));
-        settings.setValue("Name", myActuator.get_name());
-        settings.setValue("Id", myActuator.get_id());
-        settings.setValue("Description",myActuator.get_description());
-        settings.setValue("Plasement2",myActuator.get_placement2().get_id());
-        settings.setValue("Plasement1",myActuator.get_placement1().get_id());
-        settings.setValue("Plasement0",myActuator.get_placement0().get_id());
-        settings.setValue("Signal", myActuator.get_signal().get_id());
-
-        settings.endGroup();
+        if(property.tagName() == "SHORT-NAME")
+        {
+            name = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "ID")
+        {
+            id = (property.firstChild().toText().data()).toInt();
+        }
+        if(property.tagName() == "DESCRIPTION")
+        {
+            description = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "OFFSET")
+        {
+            offset = property.firstChild().toText().data().toDouble();
+        }
+        if(property.tagName() == "FACTOR")
+        {
+            factor = property.firstChild().toText().data().toDouble();
+        }
+        if(property.tagName() == "INIT-VALUE")
+        {
+            init = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "MAX-VALUE")
+        {
+            max = property.firstChild().toText().data().toDouble();
+        }
+        if(property.tagName() == "MIN-VALUE")
+        {
+            min = property.firstChild().toText().data().toDouble();
+        }
+        if(property.tagName() == "ERROR-VALUE")
+        {
+            error = property.firstChild().toText().data().toInt();
+        }
+        property = property.nextSibling().toElement();
     }
+    Signal_Setting new_element;
+    new_element.set_name(name);
+    new_element.set_id(id);
+    new_element.set_description(description);
+    new_element.set_offset(offset);
+    new_element.set_factor(factor);
+    new_element.set_initRawValue(init);
+    new_element.set_maxValue(max);
+    new_element.set_minValue(min);
+    new_element.set_errRawValue(error);
+
+    signals_map.insert(id, new_element);
 }
 
-void Setting_Containers::save_all_signals_to_file()
+void Setting_Containers::parsing_xml_actuator(QDomElement property)
 {
-    QSettings  settings(pathToIni_signal, QSettings::IniFormat);
-    settings.clear();
+    QString name;
+    int id = 0;
+    QString description;
+    int pl2_id = 0;
+    int pl1_id = 0;
+    int pl0_id = 0;
+    int net_id = 0;
+    int sig_id = 0;
 
-    // create AbstractSensor for each sensor
-    QList<int> keys = signals_map.keys();
-    foreach(int key, keys)
+    while(!property.isNull())
     {
-        Signal_Setting mySignal = signals_map[key];
-
-        settings.beginGroup("Signal_" + QString::number(mySignal.get_id()));
-        settings.setValue("Name", mySignal.get_name());
-        settings.setValue("Id", mySignal.get_id());
-        settings.setValue("Description",mySignal.get_description());
-        settings.setValue("Offset",mySignal.get_offset());
-        settings.setValue("Scale",mySignal.get_factor());
-        settings.setValue("InitSourceValue",mySignal.get_initRawValue());
-        settings.setValue("Err_sourceValue",mySignal.get_errRawValue());
-        settings.setValue("MaxValue",mySignal.get_maxValue());
-        settings.setValue("MinValue",mySignal.get_minValue());
-
-        settings.endGroup();
+        if(property.tagName() == "SHORT-NAME")
+        {
+            name = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "ID")
+        {
+            id = (property.firstChild().toText().data()).toInt();
+        }
+        if(property.tagName() == "DESCRIPTION")
+        {
+            description = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "PLACEMENT-2")
+        {
+            pl2_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "PLACEMENT-1")
+        {
+            pl1_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "PLACEMENT-0")
+        {
+            pl0_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "REF-NET-ID")
+        {
+            net_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "REF-SIGNAL-ID")
+        {
+            sig_id = property.firstChild().toText().data().toInt();
+        }
+        property = property.nextSibling().toElement();
     }
+
+    Actuator_Setting new_element;
+    new_element.set_name(name);
+    new_element.set_id(id);
+    new_element.set_description(description);
+    new_element.set_plasement2(placements_map[pl2_id]);
+    new_element.set_plasement1(placements_map[pl1_id]);
+    new_element.set_plasement0(placements_map[pl0_id]);
+    new_element.set_network(networks_map[net_id]);
+    new_element.set_signal(signals_map[sig_id]);
+    actuators_map.insert(id, new_element);
+}
+
+void Setting_Containers::parsing_xml_sensor(QDomElement property)
+{
+    QString name;
+    int id = 0;
+    QString description;
+    int pl2_id = 0;
+    int pl1_id = 0;
+    int pl0_id = 0;
+    int net_id = 0;
+    int sig_id = 0;
+
+    while(!property.isNull())
+    {
+        if(property.tagName() == "SHORT-NAME")
+        {
+            name = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "ID")
+        {
+            id = (property.firstChild().toText().data()).toInt();
+        }
+        if(property.tagName() == "DESCRIPTION")
+        {
+            description = property.firstChild().toText().data();
+        }
+        if(property.tagName() == "PLACEMENT-2")
+        {
+            pl2_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "PLACEMENT-1")
+        {
+            pl1_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "PLACEMENT-0")
+        {
+            pl0_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "REF-NET-ID")
+        {
+            net_id = property.firstChild().toText().data().toInt();
+        }
+        if(property.tagName() == "REF-SIGNAL-ID")
+        {
+            sig_id = property.firstChild().toText().data().toInt();
+        }
+        property = property.nextSibling().toElement();
+    }
+
+    Sensor_Setting new_element;
+    new_element.set_name(name);
+    new_element.set_id(id);
+    new_element.set_description(description);
+    new_element.set_plasement2(placements_map[pl2_id]);
+    new_element.set_plasement1(placements_map[pl1_id]);
+    new_element.set_plasement0(placements_map[pl0_id]);
+    new_element.set_network(networks_map[net_id]);
+    new_element.set_signal(signals_map[sig_id]);
+
+    sensors_map.insert(id, new_element);
 }
 
 QStringList Setting_Containers::get_placement_names_list()

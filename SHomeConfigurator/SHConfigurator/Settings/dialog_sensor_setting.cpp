@@ -108,7 +108,7 @@ void Dialog_Sensor_Setting::delete_sensor_from_list(int id)
 
 void Dialog_Sensor_Setting::on_pushButton_save_clicked()
 {
-    p_containers->save_all_sensors_to_file();
+    p_containers->write_to_xml();
     close();
 }
 

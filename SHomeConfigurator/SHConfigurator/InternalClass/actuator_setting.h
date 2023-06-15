@@ -13,7 +13,7 @@ public:
     Actuator_Setting();
     Actuator_Setting(QString Name, int SensorID);
     Actuator_Setting(QString Name, int SensorID,
-                     Placement_Setting Placement2,
+                     Placement_Setting Placement2, // вместоPlacement0-2 передать вектор плайсментов
                      Placement_Setting Placement1,
                      Placement_Setting Placement0,
                      QString Description);

@@ -18,9 +18,13 @@ public:
     ~Dialog_Actuator_Edit();
 
     void set_actuator(Actuator_Setting sensor);
+    Actuator_Setting get_actuator();
 
 private slots:
     void on_comboBox_signalValue_currentIndexChanged(const QString &arg1);
+    void on_buttonBox_Actuator_accepted();
+
+    void on_buttonBox_Actuator_rejected();
 
 private:
     Ui::Dialog_Actuator_Edit *ui;

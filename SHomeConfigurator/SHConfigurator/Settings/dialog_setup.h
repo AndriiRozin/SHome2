@@ -17,32 +17,18 @@ public:
     ~Dialog_Setup();
 
 private:
-    void save_Init_Path(QString absPath);
-    void save_Init_net(QString file_Net);
-    void save_Init_place(QString file_place);
-    void save_Init_signal(QString file_place);
-    void save_Init_sensor(QString file_place);
-    void save_Init_actuator(QString file_place);
-
-    QString read_Init_Folder();
-    QString read_Init_net();
-    QString read_Init_place();
-    QString read_Init_signal();
-    QString read_Init_sensor();
-    QString read_Init_actuator();
-
-    void check_write_file_name_net();
-    void check_write_file_name_place();
-    void check_write_file_name_signal();
-    void check_write_file_name_sensor();
-    void check_write_file_name_actuator();
+    void save_config_path(QString file_name);
+    QString read_config_path();
+    bool check_write_file_config_xml(bool* ok);
 
 private slots:
-    void on_pushButton_Net_Change_clicked();
-    void on_pushButton_Placement_Change_clicked();
-    void on_pushButton_Signal_Change_clicked();
-    void on_pushButton_Sensor_Change_clicked();
-    void on_pushButton_ACtuator_Change_clicked();
+//    void on_pushButton_Net_Change_clicked();
+//    void on_pushButton_Placement_Change_clicked();
+//    void on_pushButton_Signal_Change_clicked();
+//    void on_pushButton_Sensor_Change_clicked();
+//    void on_pushButton_ACtuator_Change_clicked();
+
+    void on_pushButton_file_change_clicked();
 
 private:
     Ui::Dialog_Setup *ui;
@@ -52,6 +38,8 @@ private:
     QString file_signal;
     QString file_sensor;
     QString file_actuator;
+
+    QString file_config;
 };
 
 #endif // DIALOG_SETUP_H
