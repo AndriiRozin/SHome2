@@ -1,8 +1,8 @@
 #include "dialog_placement_setting.h"
 #include "ui_dialog_placement_setting.h"
 
-#include <QSettings>
 #include <QDebug>
+#include <QMessageBox>
 #include "Settings/dialog_placement_edit.h"
 
 Dialog_Placement_Setting::Dialog_Placement_Setting(QWidget *parent, Setting_Containers *containers) :
@@ -39,10 +39,11 @@ void Dialog_Placement_Setting::create_table_placement()
 void Dialog_Placement_Setting::fill_table_placement()
 {
     ui->tableWidget_placement->setRowCount(0);
-    for(int i = 0; i < p_containers->placements_map.size(); i++)
+
+    foreach(int key, p_containers->placements_map.keys())
     {
-        Placement_Setting tmp =  p_containers->placements_map[i];
-        add_row_placement(tmp);
+        Placement_Setting element =  p_containers->placements_map.value(key);
+        add_row_placement(element);
     }
 }
 
@@ -77,32 +78,25 @@ void Dialog_Placement_Setting::on_pushButton_add_clicked()
 
 void Dialog_Placement_Setting::on_pushButton_delete_clicked()
 {
-    bool ok;
-    int delete_row = QInputDialog::getInt(this, tr("Input line"),
-                                          tr("Line"), 1, 1, p_containers->placements_map.size(), 1, &ok);
+    int select_row = ui->tableWidget_placement->currentRow();
+    if(ui->tableWidget_placement->selectedItems().isEmpty())
+    {
+        return;
+    }
 
-    if(ok) {
-        delete_placement_from_list(delete_row - 1);
+    int warning = QMessageBox::warning(0, "Warning", "Do you really want to delete line " + QString::number(select_row+1) +"?",
+                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if(warning == QMessageBox::Yes)
+    {
+        delete_placement_from_list(select_row);
         fill_table_placement();
     }
 }
 
-void Dialog_Placement_Setting::delete_placement_from_list(int id)
+void Dialog_Placement_Setting::delete_placement_from_list(int row)
 {
+    int id = ui->tableWidget_placement->item(row, T_ID)->text().toInt();
     p_containers->placements_map.remove(id);
-
-    QList<int> keys = p_containers->placements_map.keys();
-    foreach(int key, keys) {
-        if(key > id){
-            Placement_Setting current_place = p_containers->placements_map[key];
-            QString name = current_place.get_name();
-            QString description = current_place.get_description();
-            Placement_Setting new_place = Placement_Setting(name, key-1, description);
-
-            p_containers->placements_map.remove(key);
-            p_containers->placements_map.insert(key-1, new_place);
-        }
-    }
 }
 
 void Dialog_Placement_Setting::on_pushButton_save_clicked()
@@ -119,9 +113,11 @@ void Dialog_Placement_Setting::on_pushButton_close_clicked()
 
 void Dialog_Placement_Setting::on_tableWidget_placement_cellDoubleClicked(int row, int column)
 {
-    Placement_Setting currentPlace = p_containers->placements_map[row];
+    int id = ui->tableWidget_placement->item(row, T_ID)->text().toInt();
+
+    Placement_Setting currentPlace = p_containers->placements_map.value(id);
     Dialog_Placement_Edit mDialog_Place_edit(this, p_containers);
-    mDialog_Place_edit.edit_place(currentPlace);
+    mDialog_Place_edit.set_place(currentPlace);
     mDialog_Place_edit.setModal(true);
     mDialog_Place_edit.exec();
 
@@ -131,6 +127,7 @@ void Dialog_Placement_Setting::on_tableWidget_placement_cellDoubleClicked(int ro
     // added new net to containers
     if(new_place.get_id() >= 0)
     {
+        p_containers->placements_map.remove(id);
         p_containers->placements_map.insert(new_place.get_id(), new_place);
         fill_table_placement();
     }

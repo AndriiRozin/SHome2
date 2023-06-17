@@ -17,7 +17,7 @@ public:
     explicit Dialog_Signal_Edit(QWidget *parent = nullptr, Setting_Containers * new_containers = nullptr);
     ~Dialog_Signal_Edit();
 
-    void edit_signal(Signal_Setting new_signal);
+    void set_signal(Signal_Setting new_signal);
     Signal_Setting get_signal();
 
 private:

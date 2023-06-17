@@ -17,33 +17,52 @@ public:
     explicit Dialog_Sensor_Edit(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Sensor_Edit();
 
-    void edit_sensor(Sensor_Setting sensor);
+    void set_sensor(Sensor_Setting sensor);
     Sensor_Setting get_sensor();
 
+
 private slots:
-    void on_comboBox_placement2_currentIndexChanged(const QString &arg1);
-    void on_comboBox_placement1_currentIndexChanged(const QString &arg1);
-    void on_comboBox_placement0_currentIndexChanged(const QString &arg1);
+    //void on_comboBox_placement2_currentIndexChanged(const QString &arg1);
+    //void on_comboBox_placement1_currentIndexChanged(const QString &arg1);
+    //void on_comboBox_placement0_currentIndexChanged(const QString &arg1);
 
-    void on_comboBox_network_currentIndexChanged(const QString &arg1);
+    //void on_comboBox_network_currentIndexChanged(const QString &arg1);
 
-    void on_comboBox_signal_currentIndexChanged(const QString &arg1);
-
-
-
-    void on_lineEdit_name_editingFinished();
-
-    void on_lineEdit_description_editingFinished();
-
-    void on_buttonBox_accepted();
+    //void on_comboBox_signal_currentIndexChanged(const QString &arg1);
 
 
-    void on_pushButton_sourceValue_clicked();
 
-    void on_pushButton_CalculateValue_clicked();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    void on_buttonBox_sensor_accepted();
+
+    void on_buttonBox_sensor_rejected();
+
+    void on_comboBox_sensor_network_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_sensor_signal_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_sensor_placement2_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_sensor_placement1_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_sensor_placement0_currentTextChanged(const QString &arg1);
 
 private:
-    void init_dialog();
+    void init_Sensor_Edit();
     void print_sensor();
 
 private:

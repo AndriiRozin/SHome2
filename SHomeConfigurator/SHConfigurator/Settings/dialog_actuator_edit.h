@@ -20,11 +20,27 @@ public:
     void set_actuator(Actuator_Setting sensor);
     Actuator_Setting get_actuator();
 
-private slots:
-    void on_comboBox_signalValue_currentIndexChanged(const QString &arg1);
-    void on_buttonBox_Actuator_accepted();
 
-    void on_buttonBox_Actuator_rejected();
+private:
+    void print_actuator();
+    void init_Actuator_Edit();
+
+private slots:
+
+
+
+
+    void on_comboBox_actuator_network_currentTextChanged(const QString &arg1);
+
+    void on_buttonBox_actuator_accepted();
+
+    void on_comboBox_actuator_signal_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_actuator_placement2_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_actuator_placement1_currentTextChanged(const QString &arg1);
+
+    void on_comboBox_actuator_placement0_currentTextChanged(const QString &arg1);
 
 private:
     Ui::Dialog_Actuator_Edit *ui;

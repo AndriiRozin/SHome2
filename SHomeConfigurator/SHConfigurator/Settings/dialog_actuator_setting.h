@@ -28,6 +28,12 @@ private slots:
 
     void on_pushButton_save_clicked();
 
+    void on_pushButton_add_clicked();
+
+    void on_pushButton_delete_clicked();
+
+    void on_pushButton_cancel_clicked();
+
 private:
     void create_table_actuator();
     void fill_table_actuator();

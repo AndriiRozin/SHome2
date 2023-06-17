@@ -17,16 +17,17 @@ public:
     explicit Dialog_Net_Edit(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Net_Edit();
 
-    void edit_net(Net_Setting net);
+    void set_net(Net_Setting net);
     Net_Setting get_net();
 
 private slots:
     void on_buttonBox_Net_Edit_accepted();
     void on_buttonBox_Net_Edit_rejected();
+    void on_spinBox_id_valueChanged(int arg1);
 
 private:
     Ui::Dialog_Net_Edit *ui;
-    Net_Setting net;
+    Net_Setting net;    
     Setting_Containers * p_containers;
 };
 

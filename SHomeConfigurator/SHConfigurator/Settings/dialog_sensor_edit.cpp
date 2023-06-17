@@ -10,8 +10,6 @@ Dialog_Sensor_Edit::Dialog_Sensor_Edit(QWidget *parent, Setting_Containers * con
     p_containers(containers)
 {
     ui->setupUi(this);
-
-    init_dialog();
 }
 
 Dialog_Sensor_Edit::~Dialog_Sensor_Edit()
@@ -19,9 +17,10 @@ Dialog_Sensor_Edit::~Dialog_Sensor_Edit()
     delete ui;
 }
 
-void Dialog_Sensor_Edit::edit_sensor(Sensor_Setting new_sensor)
+void Dialog_Sensor_Edit::set_sensor(Sensor_Setting new_sensor)
 {
     sensor = new_sensor;
+    init_Sensor_Edit();
     print_sensor();
 }
 
@@ -30,156 +29,187 @@ Sensor_Setting  Dialog_Sensor_Edit::get_sensor()
     return sensor;
 }
 
-void Dialog_Sensor_Edit::init_dialog()
+void Dialog_Sensor_Edit::init_Sensor_Edit()
 {
     // init comboboxes
-    QStringList networks = p_containers->get_net_names_list();
-    ui->comboBox_network->addItems(networks);
+    QStringList networks_lst = p_containers->get_net_names_list();
+    ui->comboBox_sensor_network->addItems(networks_lst);
 
     QStringList plasements_lst = p_containers->get_placement_names_list();
-    ui->comboBox_placement2->addItems(plasements_lst);
-    ui->comboBox_placement1->addItems(plasements_lst);
-    ui->comboBox_placement0->addItems(plasements_lst);
+    ui->comboBox_sensor_placement2->addItems(plasements_lst);
+    ui->comboBox_sensor_placement1->addItems(plasements_lst);
+    ui->comboBox_sensor_placement0->addItems(plasements_lst);
 
     QStringList signalValue_lst = p_containers->get_signalValues_names_list();
-    ui->comboBox_signal->addItems(signalValue_lst);
-}
-
-void Dialog_Sensor_Edit::on_lineEdit_name_editingFinished()
-{
-    sensor.set_name(ui->lineEdit_name->text());
-    print_sensor();
-}
-
-void Dialog_Sensor_Edit::on_lineEdit_description_editingFinished()
-{
-    sensor.set_description(ui->lineEdit_description->text());
-    print_sensor();
-}
-
-void Dialog_Sensor_Edit::on_comboBox_signal_currentIndexChanged(const QString &arg1)
-{
-    bool ok;
-    int id = p_containers->get_signalID_by_name(arg1,&ok);
-    if(ok) {
-        sensor.set_signal(p_containers->signals_map[id]);
-        print_sensor();
-    }
-}
-
-void Dialog_Sensor_Edit::on_comboBox_network_currentIndexChanged(const QString &arg1)
-{
-    bool ok;
-    int netID = p_containers->get_networkID_by_name(arg1,&ok);
-    if(ok) {
-        sensor.set_network(p_containers->networks_map[netID]);
-        print_sensor();
-    }
-}
-
-void Dialog_Sensor_Edit::on_comboBox_placement2_currentIndexChanged(const QString &arg1)
-{
-    bool ok;
-    int id = p_containers->get_placementID_by_name(arg1,&ok);
-    if(ok) {
-        sensor.set_plasement2(p_containers->placements_map[id]);
-    }
-}
-
-void Dialog_Sensor_Edit::on_comboBox_placement1_currentIndexChanged(const QString &arg1)
-{
-    bool ok;
-    int id = p_containers->get_placementID_by_name(arg1,&ok);
-    if(ok) {
-        sensor.set_plasement1(p_containers->placements_map[id]);
-    }
-}
-
-void Dialog_Sensor_Edit::on_comboBox_placement0_currentIndexChanged(const QString &arg1)
-{
-    bool ok;
-    int id = p_containers->get_placementID_by_name(arg1,&ok);
-    if(ok) {
-        sensor.set_plasement0(p_containers->placements_map[id]);
-    }
+    ui->comboBox_sensor_signal->addItems(signalValue_lst);
 }
 
 void Dialog_Sensor_Edit::print_sensor()
 {
-    ui->lineEdit_name->setText(sensor.get_name());
-    ui->lineEdit_description->setText(sensor.get_description());
-    ui->label_sensorID->setText(QString::number(sensor.get_id()));
+    ui->lineEdit_sensor_name->setText(sensor.get_name());    
+    ui->spinBox_sensor_id->setValue(sensor.get_id());
+    ui->lineEdit_sensor_description->setText(sensor.get_description());
 
-    ui->label_net_name->setText(sensor.get_network().get_name());
-    ui->label_net_id->setText(QString::number(sensor.get_network().get_id()));
-    ui->label_net_description->setText(sensor.get_network().get_description());
+    ui->comboBox_sensor_placement2->setCurrentText(sensor.get_placement2().get_name());
+    ui->comboBox_sensor_placement1->setCurrentText(sensor.get_placement1().get_name());
+    ui->comboBox_sensor_placement0->setCurrentText(sensor.get_placement0().get_name());
 
-    ui->comboBox_placement2->setCurrentText(sensor.get_placement2().get_name());
-    ui->comboBox_placement1->setCurrentText(sensor.get_placement1().get_name());
-    ui->comboBox_placement0->setCurrentText(sensor.get_placement0().get_name());
+    ui->comboBox_sensor_signal->setCurrentText(sensor.get_signal().get_name());
 
-    ui->comboBox_signal->setCurrentIndex(sensor.get_signal().get_id());
+    ui->comboBox_sensor_network->setCurrentText(sensor.get_network().get_name());
+}
 
-    ui->label_name->setText(sensor.get_signal().get_name());
-    ui->label_id->setText(QString::number(sensor.get_signal().get_id()));
-    ui->label_offset->setText(QString::number(sensor.get_signal().get_offset()));
-    ui->label_scale->setText(QString::number(sensor.get_signal().get_factor()));
-    ui->label_Init->setText(QString::number(sensor.get_signal().get_initRawValue()));
-    ui->label_Error->setText(QString::number(sensor.get_signal().get_errRawValue()));
-    ui->label_Description->setText(sensor.get_signal().get_description());
-    ui->label_Max->setText(QString::number(sensor.get_signal().get_maxValue()));
-    ui->label_Min->setText(QString::number(sensor.get_signal().get_minValue()));
 
-    ui->label_SourceValue->setText(QString::number(sensor.get_signal().get_rawValue()));
-    ui->label_CalculatedValue->setText(QString::number(sensor.get_signal().get_physicalValue()));
 
-    switch (sensor.get_signal().get_signalStatus()) {
-    case enum_signal_status::PRE_INIT:
-        ui->label_SignalStatus->setText("PRE_INIT");
-        break;
-    case enum_signal_status::INIT:
-        ui->label_SignalStatus->setText("INIT");
-        break;
-    case enum_signal_status::INIT_SUCCESS:
-        ui->label_SignalStatus->setText("INIT_SUCCESS");
-        break;
-    case enum_signal_status::E_OK:
-        ui->label_SignalStatus->setText("E_OK");
-        break;
-    case enum_signal_status::E_NOT_OK_MAX:
-        ui->label_SignalStatus->setText("E_NOT_OK_MAX");
-        break;
-    case enum_signal_status::E_NOT_OK_MIN:
-        ui->label_SignalStatus->setText("E_NOT_OK_MIN");
-        break;
-    case enum_signal_status::E_NOT_OK_DIVISION:
-        ui->label_SignalStatus->setText("E_NOT_OK_DIVISION");
-        break;
-    default:
-        ui->label_SignalStatus->setText("E_NOT_OK");
-        break;
+void Dialog_Sensor_Edit::on_buttonBox_sensor_accepted()
+{
+    sensor.set_name(ui->lineEdit_sensor_name->text());
+    sensor.set_id(ui->spinBox_sensor_id->value());
+    sensor.set_description(ui->lineEdit_sensor_description->text());
+
+    bool ok;
+    int placment2_id = p_containers->get_placementID_by_name(ui->comboBox_sensor_placement2->currentText(),&ok);
+    if(ok) {
+        Placement_Setting place2 = p_containers->placements_map.value(placment2_id);
+        sensor.set_plasement2(place2);
+    }
+
+    int placment1_id = p_containers->get_placementID_by_name(ui->comboBox_sensor_placement1->currentText(),&ok);
+    if(ok) {
+        Placement_Setting place1 = p_containers->placements_map.value(placment1_id);
+        sensor.set_plasement1(place1);
+    }
+
+    int placment0_id = p_containers->get_placementID_by_name(ui->comboBox_sensor_placement0->currentText(),&ok);
+    if(ok) {
+        Placement_Setting place0 = p_containers->placements_map.value(placment0_id);
+        sensor.set_plasement0(place0);
+    }
+
+    int signal_id = p_containers->get_signalID_by_name(ui->comboBox_sensor_signal->currentText(),&ok);
+    if(ok) {
+        Signal_Setting signal = p_containers->signals_map.value(signal_id);
+        sensor.set_signal(signal);
+    }
+
+    int net_id = p_containers->get_networkID_by_name(ui->comboBox_sensor_network->currentText(),&ok);
+    if(ok) {
+        Net_Setting net = p_containers->networks_map.value(net_id);
+        sensor.set_network(net);
     }
 }
 
-void Dialog_Sensor_Edit::on_buttonBox_accepted()
+void Dialog_Sensor_Edit::on_comboBox_sensor_network_currentTextChanged(const QString &arg1)
 {
-    p_containers->sensors_map.insert(sensor.get_id(), sensor);
+    bool ok;
+    int net_id = p_containers->get_networkID_by_name(arg1,&ok);
+    if(ok) {
+        Net_Setting net = p_containers->networks_map.value(net_id);
+        ui->label_snet_id->setText(QString::number(net.get_id()));
+        ui->label_snet_description->setText(net.get_description());
+    }
+}
+
+void Dialog_Sensor_Edit::on_comboBox_sensor_signal_currentTextChanged(const QString &arg1)
+{
+    bool ok;
+    int signal_id = p_containers->get_signalID_by_name(arg1,&ok);
+    if(ok) {
+        Signal_Setting signal = p_containers->signals_map.value(signal_id);
+        ui->label_ss_id->setText(QString::number(signal.get_id()));
+        ui->label_ss_description->setText(signal.get_description());
+    }
 }
 
 
-void Dialog_Sensor_Edit::on_pushButton_sourceValue_clicked()
+void Dialog_Sensor_Edit::on_comboBox_sensor_placement2_currentTextChanged(const QString &arg1)
 {
-    Signal_Setting current_signal = sensor.get_signal();
-    current_signal.set_rawValue(ui->spinBox_SourceValue->value());
-    sensor.set_signal(current_signal);
-    print_sensor();
+    bool ok;
+    int placment2_id = p_containers->get_placementID_by_name(arg1,&ok);
+    if(ok) {
+        Placement_Setting place2 = p_containers->placements_map.value(placment2_id);
+        ui->label_s_placement2_id->setText(QString::number(place2.get_id()));
+        ui->label_s_placement2_description->setText(place2.get_description());
+    }
 }
 
-void Dialog_Sensor_Edit::on_pushButton_CalculateValue_clicked()
+
+void Dialog_Sensor_Edit::on_comboBox_sensor_placement1_currentTextChanged(const QString &arg1)
 {
-    Signal_Setting current_signal = sensor.get_signal();
-    current_signal.set_physicalValue(ui->doubleSpinBox_CalculateValue->value());
-    sensor.set_signal(current_signal);
-    print_sensor();
-    qDebug() << __FUNCTION__ << ui->doubleSpinBox_CalculateValue->value() << current_signal.get_physicalValue();
+    bool ok;
+    int placment1_id = p_containers->get_placementID_by_name(arg1,&ok);
+    if(ok) {
+        Placement_Setting place1 = p_containers->placements_map.value(placment1_id);
+        ui->label_s_placement1_id->setText(QString::number(place1.get_id()));
+        ui->label_s_placement1_description->setText(place1.get_description());
+    }
 }
+
+
+void Dialog_Sensor_Edit::on_comboBox_sensor_placement0_currentTextChanged(const QString &arg1)
+{
+    bool ok;
+    int placment0_id = p_containers->get_placementID_by_name(arg1,&ok);
+    if(ok) {
+        Placement_Setting place0 = p_containers->placements_map.value(placment0_id);
+        ui->label_s_placement0_id->setText(QString::number(place0.get_id()));
+        ui->label_s_placement0_description->setText(place0.get_description());
+    }
+
+}
+
+
+
+
+void Dialog_Sensor_Edit::on_buttonBox_sensor_rejected()
+{
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
