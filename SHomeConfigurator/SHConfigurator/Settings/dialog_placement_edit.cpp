@@ -14,7 +14,7 @@ Dialog_Placement_Edit::~Dialog_Placement_Edit()
     delete ui;
 }
 
-void Dialog_Placement_Edit::edit_place(Placement_Setting new_place)
+void Dialog_Placement_Edit::set_place(Placement_Setting new_place)
 {
     place = new_place;
 

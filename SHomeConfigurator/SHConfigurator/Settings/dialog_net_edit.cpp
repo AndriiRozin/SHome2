@@ -1,6 +1,8 @@
 #include "dialog_net_edit.h"
 #include "ui_dialog_net_edit.h"
 
+#include <QDebug>
+
 Dialog_Net_Edit::Dialog_Net_Edit(QWidget *parent, Setting_Containers * m_containers) :
     QDialog(parent),
     ui(new Ui::Dialog_Net_Edit),
@@ -15,7 +17,7 @@ Dialog_Net_Edit::~Dialog_Net_Edit()
     delete ui;
 }
 
-void Dialog_Net_Edit::edit_net(Net_Setting new_net)
+void Dialog_Net_Edit::set_net(Net_Setting new_net)
 {
     net = new_net;
 
@@ -42,5 +44,12 @@ void Dialog_Net_Edit::on_buttonBox_Net_Edit_rejected()
     net.set_name("");
     net.set_id(-1);  // set error status
     net.set_description("");
+}
+
+
+
+void Dialog_Net_Edit::on_spinBox_id_valueChanged(int arg1)
+{
+
 }
 

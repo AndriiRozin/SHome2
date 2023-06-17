@@ -10,7 +10,6 @@ Setting_Containers::Setting_Containers():
     actuators_map(),
     sensors_map()
 {
-
     xml_filename = read_xml_filename();
     read_from_xml();
 }
@@ -40,9 +39,7 @@ void Setting_Containers::write_to_xml()
     create_xml_actuators(document, root);
     create_xml_sensors(document, root);
 
-    //QString xml_filename1 = "C:/smart_home_setting/SHConfig1.xml";  //!!!!!!!!!!!!!!!!!!!!!!!!
     QFile xmlFile(xml_filename);
-
     if (!xmlFile.open(QFile::WriteOnly | QFile::Text ))
     {
         qDebug() << "Open the file for writing failed";
@@ -61,7 +58,7 @@ void Setting_Containers::create_xml_nets(QDomDocument document_xml, QDomElement 
 
     foreach(int key, networks_map.keys())
     {
-        Net_Setting myNet = networks_map[key];
+        Net_Setting myNet = networks_map.value(key);
 
         QDomElement net_tag = document_xml.createElement("NET");
         networks_tag.appendChild(net_tag);
@@ -90,7 +87,7 @@ void Setting_Containers::create_xml_places(QDomDocument document_xml, QDomElemen
 
     foreach(int key, placements_map.keys())
     {
-        Placement_Setting myPlacement = placements_map[key];
+        Placement_Setting myPlacement = placements_map.value(key);
 
         QDomElement place_tag = document_xml.createElement("PLACE");
         placements_tag.appendChild(place_tag);
@@ -119,7 +116,7 @@ void Setting_Containers::create_xml_signals(QDomDocument document_xml, QDomEleme
 
     foreach(int key, signals_map.keys())
     {
-        Signal_Setting mySig = signals_map[key];
+        Signal_Setting mySig = signals_map.value(key);
 
         QDomElement signal_tag = document_xml.createElement("SIGNAL");
         signals_tag.appendChild(signal_tag);
@@ -178,7 +175,7 @@ void Setting_Containers::create_xml_actuators(QDomDocument document_xml, QDomEle
 
     foreach(int key, actuators_map.keys())
     {
-        Actuator_Setting myActuator = actuators_map[key];
+        Actuator_Setting myActuator = actuators_map.value(key);
 
         QDomElement actuator_tag = document_xml.createElement("ACTUATOR");
         actuators_tag.appendChild(actuator_tag);
@@ -220,7 +217,7 @@ void Setting_Containers::create_xml_actuators(QDomDocument document_xml, QDomEle
 
         QDomElement net_id_tag = document_xml.createElement("REF-NET-ID");
         actuator_tag.appendChild(net_id_tag);
-        QDomText net_id_text = document_xml.createTextNode(QString::number( myActuator.get_signal().get_id()));
+        QDomText net_id_text = document_xml.createTextNode(QString::number( myActuator.get_network().get_id()));
         net_id_tag.appendChild(net_id_text);
     }
 }
@@ -274,15 +271,13 @@ void Setting_Containers::create_xml_sensors(QDomDocument document_xml, QDomEleme
 
         QDomElement net_id_tag = document_xml.createElement("REF-NET-ID");
         sensor_tag.appendChild(net_id_tag);
-        QDomText net_id_text = document_xml.createTextNode(QString::number( mySensor.get_signal().get_id()));
+        QDomText net_id_text = document_xml.createTextNode(QString::number( mySensor.get_network().get_id()));
         net_id_tag.appendChild(net_id_text);
     }
 }
 
 void Setting_Containers::read_from_xml()
 {
-    //QString xml_filename1 = "C:/smart_home_setting/SHConfig1.xml";  //!!!!!!!!!!!!!!!!!!!!!!!!
-
     QDomDocument documentXML;
 
     // read xml file
@@ -304,6 +299,8 @@ void Setting_Containers::parsing_xml(QDomDocument document_xml)
     QDomElement elements = root.firstChild().toElement();
     QDomElement element;
     QDomElement property;
+
+    qDebug() << __FUNCTION__ << "networks_map.clear" << networks_map.size();
 
     while(elements.isNull() == false)
     {
@@ -519,11 +516,11 @@ void Setting_Containers::parsing_xml_actuator(QDomElement property)
     new_element.set_name(name);
     new_element.set_id(id);
     new_element.set_description(description);
-    new_element.set_plasement2(placements_map[pl2_id]);
-    new_element.set_plasement1(placements_map[pl1_id]);
-    new_element.set_plasement0(placements_map[pl0_id]);
-    new_element.set_network(networks_map[net_id]);
-    new_element.set_signal(signals_map[sig_id]);
+    new_element.set_plasement2(placements_map.value(pl2_id));
+    new_element.set_plasement1(placements_map.value(pl1_id));
+    new_element.set_plasement0(placements_map.value(pl0_id));
+    new_element.set_network(networks_map.value(net_id));
+    new_element.set_signal(signals_map.value(sig_id));
     actuators_map.insert(id, new_element);
 }
 
@@ -579,11 +576,11 @@ void Setting_Containers::parsing_xml_sensor(QDomElement property)
     new_element.set_name(name);
     new_element.set_id(id);
     new_element.set_description(description);
-    new_element.set_plasement2(placements_map[pl2_id]);
-    new_element.set_plasement1(placements_map[pl1_id]);
-    new_element.set_plasement0(placements_map[pl0_id]);
-    new_element.set_network(networks_map[net_id]);
-    new_element.set_signal(signals_map[sig_id]);
+    new_element.set_plasement2(placements_map.value(pl2_id));
+    new_element.set_plasement1(placements_map.value(pl1_id));
+    new_element.set_plasement0(placements_map.value(pl0_id));
+    new_element.set_network(networks_map.value(net_id));
+    new_element.set_signal(signals_map.value(sig_id));
 
     sensors_map.insert(id, new_element);
 }

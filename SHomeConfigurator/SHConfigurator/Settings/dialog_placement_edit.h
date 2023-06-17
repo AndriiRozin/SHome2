@@ -17,9 +17,9 @@ public:
     explicit Dialog_Placement_Edit(QWidget *parent = nullptr, Setting_Containers * p_containers = nullptr);
     ~Dialog_Placement_Edit();
 
-    void edit_place(Net_Setting net);
+    //void edit_place(Net_Setting net);
     Placement_Setting get_place();
-    void edit_place(Placement_Setting new_place);
+    void set_place(Placement_Setting new_place);
 
 private slots:
     void on_buttonBox_Placement_Edit_accepted();

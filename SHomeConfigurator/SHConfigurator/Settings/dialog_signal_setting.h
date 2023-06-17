@@ -26,11 +26,15 @@ private slots:
 
     void on_pushButton_save_clicked();
 
+    void on_pushButton_delete_clicked();
+
+    void on_pushButton_cancel_clicked();
+
 private:
     void create_table_signal();
     void fill_table_signal();
     void add_row_signal(Signal_Setting elem);
-    //void delete_signal_from_list(int id);
+    void delete_signal_from_list(int id);
 
 private:
     Ui::Dialog_Signal_Setting *ui;

@@ -33,7 +33,7 @@ void Dialog_Signal_Edit::fill_table_signal_edit()
     ui->doubleSpinBox_Max->setValue(current_signal.get_maxValue());
 }
 
-void Dialog_Signal_Edit::edit_signal(Signal_Setting new_signal)
+void Dialog_Signal_Edit::set_signal(Signal_Setting new_signal)
 {
     current_signal = new_signal;
     fill_table_signal_edit();
