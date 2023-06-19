@@ -34,6 +34,8 @@ private slots:
 
     void on_pushButton_Setup_clicked();
 
+    void on_pushButton_Device_clicked();
+
 private:
     Ui::MainWindow *ui;
     Setting_Containers * pSettingContainers;

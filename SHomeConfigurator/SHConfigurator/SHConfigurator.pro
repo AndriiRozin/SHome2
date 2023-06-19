@@ -11,6 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     InternalClass/actuator_setting.cpp \
+    InternalClass/device_setting.cpp \
     InternalClass/net_setting.cpp \
     InternalClass/placement_setting.cpp \
     InternalClass/sensor_setting.cpp \
@@ -19,6 +20,8 @@ SOURCES += \
     Settings/dialog_actuator_edit.cpp \
     Settings/dialog_actuator_setting.cpp \
     Settings/dialog_cannodeedit.cpp \
+    Settings/dialog_device_edit.cpp \
+    Settings/dialog_device_settings.cpp \
     Settings/dialog_net_edit.cpp \
     Settings/dialog_net_setting.cpp \
     Settings/dialog_placement_edit.cpp \
@@ -34,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
     InternalClass/actuator_setting.h \
+    InternalClass/device_setting.h \
     InternalClass/net_setting.h \
     InternalClass/placement_setting.h \
     InternalClass/sensor_setting.h \
@@ -42,6 +46,8 @@ HEADERS += \
     Settings/dialog_actuator_edit.h \
     Settings/dialog_actuator_setting.h \
     Settings/dialog_cannodeedit.h \
+    Settings/dialog_device_edit.h \
+    Settings/dialog_device_settings.h \
     Settings/dialog_net_edit.h \
     Settings/dialog_net_setting.h \
     Settings/dialog_placement_edit.h \
@@ -50,7 +56,7 @@ HEADERS += \
     Settings/dialog_sensor_edit.h \
     Settings/dialog_sensor_setting.h \
     Settings/dialog_setup.h \
-    Settings/dialog_signal_edit.h \    
+    Settings/dialog_signal_edit.h \
     Settings/dialog_signal_setting.h \
     mainwindow.h
 
@@ -58,6 +64,8 @@ FORMS += \
     Settings/dialog_actuator_edit.ui \
     Settings/dialog_actuator_setting.ui \
     Settings/dialog_cannodeedit.ui \
+    Settings/dialog_device_edit.ui \
+    Settings/dialog_device_settings.ui \
     Settings/dialog_net_edit.ui \
     Settings/dialog_net_setting.ui \
     Settings/dialog_placement_edit.ui \
@@ -65,7 +73,7 @@ FORMS += \
     Settings/dialog_sasetting.ui \
     Settings/dialog_sensor_edit.ui \
     Settings/dialog_sensor_setting.ui \
-    Settings/dialog_setup.ui \    
+    Settings/dialog_setup.ui \
     Settings/dialog_signal_edit.ui \
     Settings/dialog_signal_setting.ui \
     mainwindow.ui

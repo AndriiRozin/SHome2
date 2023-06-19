@@ -11,6 +11,7 @@
 #include "Settings/dialog_actuator_setting.h"
 #include "Settings/dialog_sensor_setting.h"
 #include "Settings/dialog_signal_setting.h"
+#include "Settings/dialog_device_settings.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -77,3 +78,11 @@ void MainWindow::on_pushButton_Setup_clicked()
     mDialogSetup.setModal(true);
     mDialogSetup.exec();
 }
+
+void MainWindow::on_pushButton_Device_clicked()
+{
+    Dialog_Device_Settings mDialogDevice(this, pSettingContainers);
+    mDialogDevice.setModal(true);
+    mDialogDevice.exec();
+}
+

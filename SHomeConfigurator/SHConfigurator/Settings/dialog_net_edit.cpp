@@ -3,11 +3,11 @@
 
 #include <QDebug>
 
-Dialog_Net_Edit::Dialog_Net_Edit(QWidget *parent, Setting_Containers * m_containers) :
+Dialog_Net_Edit::Dialog_Net_Edit(QWidget *parent, Setting_Containers * p_containers) :
     QDialog(parent),
     ui(new Ui::Dialog_Net_Edit),
     net(),
-    p_containers(m_containers)
+    p_containers(p_containers)
 {
     ui->setupUi(this);
 }

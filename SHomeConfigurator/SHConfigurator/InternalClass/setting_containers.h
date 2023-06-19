@@ -8,6 +8,7 @@
 #include "InternalClass/sensor_setting.h"
 #include "InternalClass/signal_setting.h"
 #include "InternalClass/actuator_setting.h"
+#include "InternalClass/device_setting.h"
 
 #include <QtXml>
 #include <QTextStream>
@@ -36,12 +37,14 @@ private:
     void parsing_xml_signal(QDomElement child);
     void parsing_xml_actuator(QDomElement child);
     void parsing_xml_sensor(QDomElement child);
+    void parsing_xml_device(QDomElement property);
 
     void create_xml_nets(QDomDocument document_xml, QDomElement);
     void create_xml_places(QDomDocument document_xml, QDomElement);
     void create_xml_signals(QDomDocument document_xml, QDomElement);
     void create_xml_actuators(QDomDocument document_xml, QDomElement);
     void create_xml_sensors(QDomDocument document_xml, QDomElement);
+    void create_xml_devices(QDomDocument document_xml, QDomElement);
 
 public:
     QMap<int, Net_Setting> networks_map;
@@ -49,6 +52,7 @@ public:
     QMap<int, Signal_Setting> signals_map;
     QMap<int, Actuator_Setting> actuators_map;
     QMap<int, Sensor_Setting> sensors_map;
+    QMap<int, Device_Setting> devices_map;
 
 private:
     QString xml_filename;
