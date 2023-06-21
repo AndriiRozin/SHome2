@@ -32,19 +32,23 @@ public:
 private:
     QString read_xml_filename();
     void parsing_xml(QDomDocument document_xml);
-    void parsing_xml_net(QDomElement child);
-    void parsing_xml_place(QDomElement child);
-    void parsing_xml_signal(QDomElement child);
+    void parsing_xml_net(QDomElement elem);
+    void parsing_xml_place(QDomElement elem);
+    void parsing_xml_signal(QDomElement elem);
     void parsing_xml_actuator(QDomElement child);
-    void parsing_xml_sensor(QDomElement child);
-    void parsing_xml_device(QDomElement property);
+    void parsing_xml_sensor(QDomElement elem);
+    void parsing_xml_device(QDomElement elem);
+    void parsing_xml_device_sensors(QDomElement, Device_Setting*);
+    void parsing_xml_device_actuators(QDomElement, Device_Setting*);
 
-    void create_xml_nets(QDomDocument document_xml, QDomElement);
-    void create_xml_places(QDomDocument document_xml, QDomElement);
-    void create_xml_signals(QDomDocument document_xml, QDomElement);
-    void create_xml_actuators(QDomDocument document_xml, QDomElement);
-    void create_xml_sensors(QDomDocument document_xml, QDomElement);
-    void create_xml_devices(QDomDocument document_xml, QDomElement);
+    void create_xml_nets(QDomElement);
+    void create_xml_places(QDomElement);
+    void create_xml_signals(QDomElement);
+    void create_xml_actuators(QDomElement);
+    void create_xml_sensors(QDomElement);
+    void create_xml_devices(QDomElement);
+    void create_xml_device_sensors(QDomElement);
+    void create_xml_device_actuators(QDomElement);
 
 public:
     QMap<int, Net_Setting> networks_map;
@@ -56,6 +60,7 @@ public:
 
 private:
     QString xml_filename;
+    QDomDocument document_xml;
 };
 
 #endif // SETTING_CONTAINERS_H

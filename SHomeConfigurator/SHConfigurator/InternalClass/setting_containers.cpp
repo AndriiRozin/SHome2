@@ -2,6 +2,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <_mingw_mac.h>
 
 Setting_Containers::Setting_Containers():
     networks_map(),
@@ -26,20 +27,20 @@ QString Setting_Containers::read_xml_filename()
 
 void Setting_Containers::write_to_xml()
 {
-    QDomDocument document;
+    document_xml.clear();
 
-    QDomProcessingInstruction instr = document.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
-    document.appendChild(instr);
+    QDomProcessingInstruction instr = document_xml.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
+    document_xml.appendChild(instr);
 
-    QDomElement root = document.createElement("ENVIRONMENT");
-    document.appendChild(root);
+    QDomElement root = document_xml.createElement("ENVIRONMENT");
+    document_xml.appendChild(root);
 
-    create_xml_nets(document, root);
-    create_xml_places(document, root);
-    create_xml_signals(document, root);
-    create_xml_actuators(document, root);
-    create_xml_sensors(document, root);
-    create_xml_devices(document, root);
+    create_xml_nets(root);
+    create_xml_places(root);
+    create_xml_signals(root);
+    create_xml_actuators(root);
+    create_xml_sensors(root);
+    create_xml_devices(root);
 
     QFile xmlFile(xml_filename);
     if (!xmlFile.open(QFile::WriteOnly | QFile::Text ))
@@ -48,12 +49,12 @@ void Setting_Containers::write_to_xml()
     }
     else {
         QTextStream xmlContent(&xmlFile);
-        xmlContent << document.toString();
+        xmlContent << document_xml.toString();
         xmlFile.close();
     }
 }
 
-void Setting_Containers::create_xml_nets(QDomDocument document_xml, QDomElement root)
+void Setting_Containers::create_xml_nets(QDomElement root)
 {
     QDomElement networks_tag = document_xml.createElement("NETWORKS");
     root.appendChild(networks_tag);
@@ -82,7 +83,7 @@ void Setting_Containers::create_xml_nets(QDomDocument document_xml, QDomElement 
     }
 }
 
-void Setting_Containers::create_xml_places(QDomDocument document_xml, QDomElement root)
+void Setting_Containers::create_xml_places(QDomElement root)
 {
     QDomElement placements_tag = document_xml.createElement("PLACEMENTS");
     root.appendChild(placements_tag);
@@ -111,7 +112,7 @@ void Setting_Containers::create_xml_places(QDomDocument document_xml, QDomElemen
     }
 }
 
-void Setting_Containers::create_xml_signals(QDomDocument document_xml, QDomElement root)
+void Setting_Containers::create_xml_signals(QDomElement root)
 {
     QDomElement signals_tag = document_xml.createElement("SIGNALS");
     root.appendChild(signals_tag);
@@ -170,7 +171,7 @@ void Setting_Containers::create_xml_signals(QDomDocument document_xml, QDomEleme
     }
 }
 
-void Setting_Containers::create_xml_actuators(QDomDocument document_xml, QDomElement root)
+void Setting_Containers::create_xml_actuators(QDomElement root)
 {
     QDomElement actuators_tag = document_xml.createElement("ACTUATORS");
     root.appendChild(actuators_tag);
@@ -224,7 +225,7 @@ void Setting_Containers::create_xml_actuators(QDomDocument document_xml, QDomEle
     }
 }
 
-void Setting_Containers::create_xml_sensors(QDomDocument document_xml, QDomElement root)
+void Setting_Containers::create_xml_sensors(QDomElement root)
 {
     QDomElement sensors_tag = document_xml.createElement("SENSORS");
     root.appendChild(sensors_tag);
@@ -278,7 +279,7 @@ void Setting_Containers::create_xml_sensors(QDomDocument document_xml, QDomEleme
     }
 }
 
-void Setting_Containers::create_xml_devices(QDomDocument document_xml, QDomElement root)
+void Setting_Containers::create_xml_devices(QDomElement root)
 {
     QDomElement devices_tag = document_xml.createElement("DEVICES");
     root.appendChild(devices_tag);
@@ -304,7 +305,48 @@ void Setting_Containers::create_xml_devices(QDomDocument document_xml, QDomEleme
         device_tag.appendChild(description_tag);
         QDomText description_text = document_xml.createTextNode(myDevice.get_description());
         description_tag.appendChild(description_text);
+
+        QDomElement d_sensors_tag = document_xml.createElement("SENSORS");
+        device_tag.appendChild(d_sensors_tag);
+        create_xml_device_sensors(d_sensors_tag);
+
+        QDomElement d_actuators_tag = document_xml.createElement("ACTUATORS");
+        device_tag.appendChild(d_actuators_tag);
+        create_xml_device_actuators(d_actuators_tag);
     }
+}
+
+void Setting_Containers::create_xml_device_sensors(QDomElement d_sensors_tag)
+{
+    QDomElement sensor_tag = document_xml.createElement("SENSOR");
+    d_sensors_tag.appendChild(sensor_tag);
+
+    QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+    sensor_tag.appendChild(short_name_tag);
+    QDomText name_text = document_xml.createTextNode("sensor 1");   //myDevice.get_name());
+    short_name_tag.appendChild(name_text);
+
+    QDomElement sensor_ref_tag = document_xml.createElement("SENSOR-REF");
+    sensor_tag.appendChild(sensor_ref_tag);
+    QDomText sensor_ref_text = document_xml.createTextNode("sensor_ref 1");   //myDevice.get_name());
+    sensor_ref_tag.appendChild(sensor_ref_text);
+
+}
+
+void Setting_Containers::create_xml_device_actuators(QDomElement d_actuators_tag)
+{
+    QDomElement actuator_tag = document_xml.createElement("ACTUATOR");
+    d_actuators_tag.appendChild(actuator_tag);
+
+    QDomElement short_name_tag = document_xml.createElement("SHORT-NAME");
+    actuator_tag.appendChild(short_name_tag);
+    QDomText name_text = document_xml.createTextNode("actuator 1");   //myDevice.get_name());
+    short_name_tag.appendChild(name_text);
+
+    QDomElement actuator_ref_tag = document_xml.createElement("ACTUATOR-REF");
+    actuator_tag.appendChild(actuator_ref_tag);
+    QDomText actuator_ref_text = document_xml.createTextNode("actuator_ref 1");   //myDevice.get_name());
+    actuator_ref_tag.appendChild(actuator_ref_text);
 }
 
 void Setting_Containers::read_from_xml()
@@ -627,6 +669,7 @@ void Setting_Containers::parsing_xml_device(QDomElement property)
     QString name;
     int id = 0;
     QString description;
+    Device_Setting new_element;
 
     while(!property.isNull())
     {
@@ -642,15 +685,85 @@ void Setting_Containers::parsing_xml_device(QDomElement property)
         {
             description = property.firstChild().toText().data();
         }
+        if(property.tagName() == "SENSORS")
+        {
+            parsing_xml_device_sensors(property, &new_element);
+        }
+        if(property.tagName() == "ACTUATORS")
+        {
+            parsing_xml_device_actuators(property, &new_element);
+        }
         property = property.nextSibling().toElement();
     }
 
-    Device_Setting new_element;
+
     new_element.set_name(name);
     new_element.set_id(id);
     new_element.set_description(description);
 
     devices_map.insert(id, new_element);
+}
+
+void Setting_Containers::parsing_xml_device_sensors(QDomElement sensors, Device_Setting *new_device)
+{
+    QDomElement sensor = sensors.firstChild().toElement();
+
+    while(!sensor.isNull())
+    {
+        if(sensor.tagName() == "SENSOR")
+        {
+            QString name;
+            int sensor_ref;
+
+            QDomElement element = sensor.firstChild().toElement();
+            while(!element.isNull())
+            {
+                if(element.tagName() == "SHORT-NAME")
+                {
+                    name = element.firstChild().toText().data();
+                }
+
+                if(element.tagName() == "SENSOR-REF")
+                {
+                    sensor_ref = element.firstChild().toText().data().toInt();
+                }
+                element=element.nextSiblingElement().toElement();
+            }
+            new_device->dev_sensor_map.insert(sensor_ref,name);
+        }
+        sensor=sensor.nextSiblingElement().toElement();
+    }
+}
+
+void Setting_Containers::parsing_xml_device_actuators(QDomElement actuators,Device_Setting *new_device)
+{
+    QDomElement actuator = actuators.firstChild().toElement();
+
+    while(!actuator.isNull())
+    {
+        if(actuator.tagName() == "ACTUATOR")
+        {
+            QString name;
+            int actuator_ref;
+
+            QDomElement element = actuator.firstChild().toElement();
+            while(!element.isNull())
+            {
+                if(element.tagName() == "SHORT-NAME")
+                {
+                    name = element.firstChild().toText().data();
+                }
+
+                if(element.tagName() == "ACTUATOR-REF")
+                {
+                    actuator_ref = element.firstChild().toText().data().toInt();
+                }
+                element=element.nextSiblingElement().toElement();
+            }
+            new_device->dev_actuator_map.insert(actuator_ref,name);
+        }
+        actuator=actuator.nextSiblingElement().toElement();
+    }
 }
 
 QStringList Setting_Containers::get_placement_names_list()

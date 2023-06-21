@@ -40,3 +40,7 @@ void Device_Setting::set_description(QString new_description)
 {
     description = new_description;
 }
+
+
+
+

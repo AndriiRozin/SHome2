@@ -111,6 +111,7 @@ void Dialog_Device_Settings::on_pushButton_Cancel_clicked()
 {
     close();
 }
+
 void Dialog_Device_Settings::on_tableWidget_device_cellDoubleClicked(int row, int column)
 {
     int id = ui->tableWidget_device->item(row, T_ID)->text().toInt();
@@ -123,8 +124,6 @@ void Dialog_Device_Settings::on_tableWidget_device_cellDoubleClicked(int row, in
 
     Device_Setting new_device;
     new_device = mDialog_Device_edit.get_device();
-
-    qDebug() << __FUNCTION__ << new_device.get_name()<<new_device.get_id()<< new_device.get_description();
 
     // added new device to containers
     if(new_device.get_id() >= 0)
